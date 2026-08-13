@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import { AcademicSession, ExecutiveMember } from '@/lib/types';
 import { supabase } from '@/lib/supabase';
 import { getOptimizedImageUrl } from '@/lib/cloudinary';
-import { Lock, Plus, Trash2, Edit2, Check, ShieldAlert } from 'lucide-react';
+import CloudinaryUploadWidget from '@/components/CloudinaryUploadWidget';
+import { Lock, Plus, Trash2, Check, ShieldAlert } from 'lucide-react';
 
 interface AdminExecManagerProps {
   session: AcademicSession;
@@ -82,59 +83,66 @@ export default function AdminExecManager({
           <span>Add Executive Member ({session.session_code})</span>
         </h3>
 
-        <form onSubmit={handleAddExec} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <input
-            type="text"
-            required
-            disabled={isLocked}
-            placeholder="Full Name (e.g. Jane Doe)"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            className="px-3.5 py-2 border border-gray-300 rounded-xl text-xs disabled:bg-gray-100 disabled:opacity-60"
-          />
+        <form onSubmit={handleAddExec} className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <input
+              type="text"
+              required
+              disabled={isLocked}
+              placeholder="Full Name (e.g. Jane Doe)"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              className="px-3.5 py-2 border border-gray-300 rounded-xl text-xs disabled:bg-gray-100 disabled:opacity-60"
+            />
 
-          <input
-            type="text"
-            required
-            disabled={isLocked}
-            placeholder="Office Position (e.g. Vice President)"
-            value={position}
-            onChange={(e) => setPosition(e.target.value)}
-            className="px-3.5 py-2 border border-gray-300 rounded-xl text-xs disabled:bg-gray-100 disabled:opacity-60"
-          />
+            <input
+              type="text"
+              required
+              disabled={isLocked}
+              placeholder="Office Position (e.g. Vice President)"
+              value={position}
+              onChange={(e) => setPosition(e.target.value)}
+              className="px-3.5 py-2 border border-gray-300 rounded-xl text-xs disabled:bg-gray-100 disabled:opacity-60"
+            />
 
-          <input
-            type="text"
-            disabled={isLocked}
-            placeholder="Photo URL / Cloudinary Link"
-            value={photoUrl}
-            onChange={(e) => setPhotoUrl(e.target.value)}
-            className="px-3.5 py-2 border border-gray-300 rounded-xl text-xs disabled:bg-gray-100 disabled:opacity-60"
-          />
+            <input
+              type="text"
+              disabled={isLocked}
+              placeholder="WhatsApp Link (e.g. https://wa.me/234...)"
+              value={whatsappUrl}
+              onChange={(e) => setWhatsappUrl(e.target.value)}
+              className="px-3.5 py-2 border border-gray-300 rounded-xl text-xs disabled:bg-gray-100 disabled:opacity-60"
+            />
+          </div>
 
-          <input
-            type="text"
-            disabled={isLocked}
-            placeholder="WhatsApp Link (e.g. https://wa.me/234...)"
-            value={whatsappUrl}
-            onChange={(e) => setWhatsappUrl(e.target.value)}
-            className="px-3.5 py-2 border border-gray-300 rounded-xl text-xs disabled:bg-gray-100 disabled:opacity-60"
-          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Direct Cloudinary Upload Component */}
+            <CloudinaryUploadWidget
+              label="Executive Headshot Photo"
+              value={photoUrl}
+              onChange={(url) => setPhotoUrl(url)}
+            />
 
-          <input
-            type="text"
-            disabled={isLocked}
-            placeholder="Short Bio Quote"
-            value={bioQuote}
-            onChange={(e) => setBioQuote(e.target.value)}
-            className="px-3.5 py-2 border border-gray-300 rounded-xl text-xs sm:col-span-2 disabled:bg-gray-100 disabled:opacity-60"
-          />
+            <div>
+              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+                Short Bio Quote
+              </label>
+              <textarea
+                disabled={isLocked}
+                rows={2}
+                placeholder="Short inspirational bio quote"
+                value={bioQuote}
+                onChange={(e) => setBioQuote(e.target.value)}
+                className="w-full px-3.5 py-2 border border-gray-300 rounded-xl text-xs disabled:bg-gray-100 disabled:opacity-60"
+              />
+            </div>
+          </div>
 
-          <div className="sm:col-span-2 lg:col-span-3 flex justify-end">
+          <div className="flex justify-end">
             <button
               type="submit"
               disabled={isLocked || loading}
-              className="px-4 py-2 rounded-xl bg-[#1A4D2E] text-white text-xs font-bold hover:bg-[#0F3320] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 cursor-pointer"
+              className="px-5 py-2.5 rounded-xl bg-[#1A4D2E] text-white text-xs font-bold hover:bg-[#0F3320] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 cursor-pointer shadow-md"
             >
               {isLocked ? <Lock className="w-3.5 h-3.5" /> : <Check className="w-3.5 h-3.5" />}
               <span>{isLocked ? 'Locked (Pioneer Session)' : 'Save Executive Member'}</span>

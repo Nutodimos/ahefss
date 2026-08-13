@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import { AcademicSession, Lecturer } from '@/lib/types';
 import { supabase } from '@/lib/supabase';
 import { getOptimizedImageUrl } from '@/lib/cloudinary';
-import { Plus, Trash2, ShieldAlert, Award } from 'lucide-react';
+import CloudinaryUploadWidget from '@/components/CloudinaryUploadWidget';
+import { Plus, Trash2, ShieldAlert } from 'lucide-react';
 
 interface AdminLecturersManagerProps {
   session: AcademicSession;
@@ -100,13 +101,10 @@ export default function AdminLecturersManager({
           </div>
 
           {isHod && (
-            <input
-              type="text"
-              disabled={isLocked}
-              placeholder="HOD Photo URL (HOD is featured with photo)"
+            <CloudinaryUploadWidget
+              label="Featured HOD Headshot Photo"
               value={photoUrl}
-              onChange={(e) => setPhotoUrl(e.target.value)}
-              className="w-full px-3.5 py-2 border border-gray-300 rounded-xl text-xs disabled:bg-gray-100 disabled:opacity-60"
+              onChange={(url) => setPhotoUrl(url)}
             />
           )}
 
@@ -114,7 +112,7 @@ export default function AdminLecturersManager({
             <button
               type="submit"
               disabled={isLocked || loading}
-              className="px-5 py-2.5 rounded-xl bg-[#1A4D2E] text-white text-xs font-bold hover:bg-[#0F3320] disabled:opacity-40 cursor-pointer"
+              className="px-5 py-2.5 rounded-xl bg-[#1A4D2E] text-white text-xs font-bold hover:bg-[#0F3320] disabled:opacity-40 cursor-pointer shadow-md"
             >
               {isLocked ? 'Locked (Pioneer Session)' : 'Save Lecturer'}
             </button>

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Founder } from '@/lib/types';
 import { supabase } from '@/lib/supabase';
+import CloudinaryUploadWidget from '@/components/CloudinaryUploadWidget';
 import { Sparkles, Save, Check } from 'lucide-react';
 
 interface AdminFounderManagerProps {
@@ -94,18 +95,11 @@ export default function AdminFounderManager({
           </div>
         </div>
 
-        <div>
-          <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
-            Founder Headshot Image URL (Cloudinary)
-          </label>
-          <input
-            type="text"
-            required
-            value={photoUrl}
-            onChange={(e) => setPhotoUrl(e.target.value)}
-            className="w-full px-3.5 py-2 border border-gray-300 rounded-xl text-xs"
-          />
-        </div>
+        <CloudinaryUploadWidget
+          label="Founder Headshot Photo"
+          value={photoUrl}
+          onChange={(url) => setPhotoUrl(url)}
+        />
 
         <div>
           <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">

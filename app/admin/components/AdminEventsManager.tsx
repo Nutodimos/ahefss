@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import { AcademicSession, EventItem } from '@/lib/types';
 import { supabase } from '@/lib/supabase';
 import { getOptimizedImageUrl } from '@/lib/cloudinary';
-import { Lock, Plus, Trash2, ShieldAlert, Image as ImageIcon, Calendar } from 'lucide-react';
+import CloudinaryUploadWidget from '@/components/CloudinaryUploadWidget';
+import { Lock, Plus, Trash2, ShieldAlert } from 'lucide-react';
 
 interface AdminEventsManagerProps {
   session: AcademicSession;
@@ -119,24 +120,29 @@ export default function AdminEventsManager({
               onChange={(e) => setEventDate(e.target.value)}
               className="px-3.5 py-2 border border-gray-300 rounded-xl text-xs disabled:bg-gray-100 disabled:opacity-60"
             />
+          </div>
 
-            <input
-              type="text"
-              disabled={isLocked}
-              placeholder="Flyer Banner URL / Cloudinary Link"
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Direct Cloudinary Upload Component for Flyer Banner */}
+            <CloudinaryUploadWidget
+              label="Flyer Banner Image"
               value={flyerUrl}
-              onChange={(e) => setFlyerUrl(e.target.value)}
-              className="px-3.5 py-2 border border-gray-300 rounded-xl text-xs sm:col-span-2 disabled:bg-gray-100 disabled:opacity-60"
+              onChange={(url) => setFlyerUrl(url)}
             />
 
-            <input
-              type="number"
-              disabled={isLocked}
-              placeholder="Attendees Count"
-              value={attendeesCount}
-              onChange={(e) => setAttendeesCount(Number(e.target.value))}
-              className="px-3.5 py-2 border border-gray-300 rounded-xl text-xs disabled:bg-gray-100 disabled:opacity-60"
-            />
+            <div>
+              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+                Attendees Count
+              </label>
+              <input
+                type="number"
+                disabled={isLocked}
+                placeholder="Attendees Count"
+                value={attendeesCount}
+                onChange={(e) => setAttendeesCount(Number(e.target.value))}
+                className="w-full px-3.5 py-2 border border-gray-300 rounded-xl text-xs disabled:bg-gray-100 disabled:opacity-60"
+              />
+            </div>
           </div>
 
           <textarea
@@ -149,25 +155,23 @@ export default function AdminEventsManager({
             className="w-full px-3.5 py-2 border border-gray-300 rounded-xl text-xs disabled:bg-gray-100 disabled:opacity-60"
           />
 
-          <div>
-            <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">
-              Gallery Image URLs (Comma Separated for Cloudinary Pipeline)
-            </label>
-            <input
-              type="text"
-              disabled={isLocked}
-              placeholder="https://res.cloudinary.com/.../1.jpg, https://res.cloudinary.com/.../2.jpg"
-              value={galleryUrls}
-              onChange={(e) => setGalleryUrls(e.target.value)}
-              className="w-full px-3.5 py-2 border border-gray-300 rounded-xl text-xs disabled:bg-gray-100 disabled:opacity-60"
-            />
-          </div>
+          {/* Direct Cloudinary Upload Component for Gallery Photos */}
+          <CloudinaryUploadWidget
+            label="Event Photo Gallery Images (Multiple)"
+            value={galleryUrls}
+            multiple={true}
+            onChange={(url) => setGalleryUrls(url)}
+            onMultipleChange={(urls) => {
+              const current = galleryUrls ? galleryUrls.split(',').map((s) => s.trim()) : [];
+              setGalleryUrls([...current, ...urls].join(', '));
+            }}
+          />
 
           <div className="flex justify-end">
             <button
               type="submit"
               disabled={isLocked || loading}
-              className="px-5 py-2.5 rounded-xl bg-[#1A4D2E] text-white text-xs font-bold hover:bg-[#0F3320] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              className="px-5 py-2.5 rounded-xl bg-[#1A4D2E] text-white text-xs font-bold hover:bg-[#0F3320] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shadow-md"
             >
               {isLocked ? 'Locked (Pioneer Session)' : 'Save Event & Gallery'}
             </button>

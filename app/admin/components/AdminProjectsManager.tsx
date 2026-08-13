@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import { AcademicSession, ProjectItem } from '@/lib/types';
 import { supabase } from '@/lib/supabase';
 import { getOptimizedImageUrl } from '@/lib/cloudinary';
-import { Plus, Trash2, ShieldAlert, FolderGit2 } from 'lucide-react';
+import CloudinaryUploadWidget from '@/components/CloudinaryUploadWidget';
+import { Plus, Trash2, ShieldAlert } from 'lucide-react';
 
 interface AdminProjectsManagerProps {
   session: AcademicSession;
@@ -91,13 +92,10 @@ export default function AdminProjectsManager({
               className="px-3.5 py-2 border border-gray-300 rounded-xl text-xs disabled:bg-gray-100 disabled:opacity-60"
             />
 
-            <input
-              type="text"
-              disabled={isLocked}
-              placeholder="Cover Image URL / Cloudinary Link"
+            <CloudinaryUploadWidget
+              label="Project Cover Image"
               value={coverUrl}
-              onChange={(e) => setCoverUrl(e.target.value)}
-              className="px-3.5 py-2 border border-gray-300 rounded-xl text-xs disabled:bg-gray-100 disabled:opacity-60"
+              onChange={(url) => setCoverUrl(url)}
             />
           </div>
 
@@ -111,20 +109,22 @@ export default function AdminProjectsManager({
             className="w-full px-3.5 py-2 border border-gray-300 rounded-xl text-xs disabled:bg-gray-100 disabled:opacity-60"
           />
 
-          <input
-            type="text"
-            disabled={isLocked}
-            placeholder="Project Documentation Image URLs (Comma Separated)"
+          <CloudinaryUploadWidget
+            label="Project Documentation Images (Multiple)"
             value={galleryUrls}
-            onChange={(e) => setGalleryUrls(e.target.value)}
-            className="w-full px-3.5 py-2 border border-gray-300 rounded-xl text-xs disabled:bg-gray-100 disabled:opacity-60"
+            multiple={true}
+            onChange={(url) => setGalleryUrls(url)}
+            onMultipleChange={(urls) => {
+              const current = galleryUrls ? galleryUrls.split(',').map((s) => s.trim()) : [];
+              setGalleryUrls([...current, ...urls].join(', '));
+            }}
           />
 
           <div className="flex justify-end">
             <button
               type="submit"
               disabled={isLocked || loading}
-              className="px-5 py-2.5 rounded-xl bg-[#1A4D2E] text-white text-xs font-bold hover:bg-[#0F3320] disabled:opacity-40 cursor-pointer"
+              className="px-5 py-2.5 rounded-xl bg-[#1A4D2E] text-white text-xs font-bold hover:bg-[#0F3320] disabled:opacity-40 cursor-pointer shadow-md"
             >
               {isLocked ? 'Locked (Pioneer Session)' : 'Save Project'}
             </button>
