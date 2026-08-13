@@ -39,6 +39,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# Ignore heavy raw merchandise binaries (uploaded to Cloudinary)
-/public/assets/merchandise/
