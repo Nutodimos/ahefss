@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --primary: #1A4D2E;
+  --primary-dark: #0F3320;
+  --accent-gold: #C9A227;
+  --background: #FDFDF8;
+  --body-text: #1A1A1A;
+  --emphasis-text: #1A4D2E;
+}
+
+@theme inline {
+  --color-primary: #1A4D2E;
+  --color-primary-dark: #0F3320;
+  --color-accent-gold: #C9A227;
+  --color-bg-custom: #FDFDF8;
+  --color-body-text: #1A1A1A;
+  --font-serif-ceremonial: 'Cormorant Garamond', Georgia, serif;
+  --font-sans-clean: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--body-text);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+.font-ceremonial {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+/* Gold Ring Frame Utility */
+.ring-gold {
+  box-shadow: 0 0 0 2px #C9A227, 0 4px 14px 0 rgba(201, 162, 39, 0.25);
+}
+
+.border-gold {
+  border-color: #C9A227;
+}
+
+/* Subtle Geometric Watermark Background Pattern */
+.bg-watermark {
+  background-color: #FDFDF8;
+  background-image: radial-gradient(#1A4D2E 0.65px, transparent 0.65px), radial-gradient(#C9A227 0.65px, #FDFDF8 0.65px);
+  background-size: 26px 26px;
+  background-position: 0 0, 13px 13px;
+  background-opacity: 0.03;
+}
+
+/* Glassmorphic Navbar Overlay */
+.glass-nav {
+  background: rgba(253, 253, 248, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(201, 162, 39, 0.3);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #FDFDF8;
+}
+::-webkit-scrollbar-thumb {
+  background: #1A4D2E;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #0F3320;
+}

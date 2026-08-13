@@ -1,0 +1,101 @@
+'use client';
+
+import React from 'react';
+import { Lecturer } from '@/lib/types';
+import { getOptimizedImageUrl } from '@/lib/cloudinary';
+import { GraduationCap, Award, BookOpen } from 'lucide-react';
+
+interface LecturersProps {
+  lecturers: Lecturer[];
+  themeTitle: string;
+}
+
+export default function Lecturers({ lecturers, themeTitle }: LecturersProps) {
+  const hod = lecturers.find((l) => l.is_hod);
+  const otherLecturers = lecturers
+    .filter((l) => !l.is_hod)
+    .sort((a, b) => a.display_order - b.display_order);
+
+  return (
+    <section id="lecturers" className="py-16 md:py-24 bg-watermark border-b border-[#C9A227]/20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Section Header */}
+        <div className="text-center mb-14">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A4D2E]/10 border border-[#C9A227]/40 text-[#1A4D2E] text-xs font-semibold uppercase tracking-wider mb-3">
+            <GraduationCap className="w-3.5 h-3.5 text-[#C9A227]" />
+            <span>Academic Faculty</span>
+          </div>
+          <h2 className="font-ceremonial text-4xl sm:text-5xl font-bold text-[#1A4D2E]">
+            Lecturers & Faculty
+          </h2>
+          <p className="mt-3 text-sm sm:text-base text-gray-600 max-w-2xl mx-auto">
+            Acknowledging our respected department leadership and academic staff during {themeTitle}.
+          </p>
+          <div className="w-24 h-1 bg-[#C9A227] mx-auto mt-4 rounded-full"></div>
+        </div>
+
+        <div className="max-w-4xl mx-auto space-y-12">
+          
+          {/* Featured HOD Block */}
+          {hod && (
+            <div className="bg-white rounded-3xl p-8 shadow-xl border border-[#C9A227]/40 text-center relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#1A4D2E] via-[#C9A227] to-[#1A4D2E]"></div>
+              
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C9A227]/20 text-[#1A4D2E] text-xs font-bold uppercase tracking-wider mb-6">
+                <Award className="w-4 h-4 text-[#C9A227]" />
+                <span>Head of Department (HOD)</span>
+              </div>
+
+              <div className="flex flex-col items-center">
+                {/* HOD Featured Photo Frame with Gold Ring */}
+                <div className="relative w-40 h-40 rounded-full p-1 bg-gradient-to-tr from-[#C9A227] via-[#1A4D2E] to-[#C9A227] shadow-lg mb-4">
+                  <img
+                    src={getOptimizedImageUrl(hod.photo_url || '/assets/logo.jpg', { type: 'headshot', width: 400 })}
+                    alt={hod.full_name}
+                    className="w-full h-full object-cover rounded-full ring-2 ring-white"
+                  />
+                </div>
+
+                <h3 className="font-ceremonial text-3xl font-bold text-[#1A4D2E]">
+                  {hod.full_name}
+                </h3>
+                <p className="text-xs font-semibold text-[#C9A227] uppercase tracking-wider mt-1">
+                  Head of Department · AHEFSS
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Simple 2-Column Name-Only List for Other Lecturers */}
+          {otherLecturers.length > 0 && (
+            <div className="bg-white rounded-3xl p-8 shadow-md border border-gray-200">
+              <h4 className="font-ceremonial text-2xl font-bold text-[#1A4D2E] mb-6 pb-3 border-b border-gray-100 flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-[#C9A227]" />
+                <span>Departmental Academic Staff</span>
+              </h4>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {otherLecturers.map((lec, idx) => (
+                  <div
+                    key={lec.id || idx}
+                    className="flex items-center gap-3 p-3.5 rounded-xl bg-[#FDFDF8] border border-gray-100 hover:border-[#C9A227]/40 transition-colors"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-[#1A4D2E]/10 text-[#1A4D2E] font-bold text-xs flex items-center justify-center flex-shrink-0 border border-[#C9A227]/30">
+                      {idx + 1}
+                    </div>
+                    <span className="font-medium text-sm text-[#1A1A1A]">
+                      {lec.full_name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+        </div>
+
+      </div>
+    </section>
+  );
+}

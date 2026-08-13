@@ -1,0 +1,350 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import {
+  AcademicSession,
+  ExecutiveMember,
+  EventItem,
+  ProjectItem,
+  Lecturer,
+  Founder,
+} from '@/lib/types';
+import {
+  supabase,
+  MOCK_FOUNDER,
+  MOCK_SESSIONS,
+  MOCK_EXECUTIVE_MEMBERS,
+  MOCK_EVENTS,
+  MOCK_PROJECTS,
+  MOCK_LECTURERS,
+} from '@/lib/supabase';
+
+import AdminSessionWizard from './components/AdminSessionWizard';
+import AdminExecManager from './components/AdminExecManager';
+import AdminEventsManager from './components/AdminEventsManager';
+import AdminProjectsManager from './components/AdminProjectsManager';
+import AdminLecturersManager from './components/AdminLecturersManager';
+import AdminFounderManager from './components/AdminFounderManager';
+
+import {
+  ShieldCheck,
+  Lock,
+  PlusCircle,
+  Users,
+  Calendar,
+  FolderGit2,
+  GraduationCap,
+  Sparkles,
+  ArrowLeft,
+  LogOut,
+} from 'lucide-react';
+import Link from 'next/link';
+
+export default function AdminDashboardPage() {
+  const [sessions, setSessions] = useState<AcademicSession[]>(MOCK_SESSIONS);
+  const [selectedSession, setSelectedSession] = useState<AcademicSession>(MOCK_SESSIONS[0]);
+
+  const [executives, setExecutives] = useState<ExecutiveMember[]>([]);
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [projects, setProjects] = useState<ProjectItem[]>([]);
+  const [lecturers, setLecturers] = useState<Lecturer[]>([]);
+  const [founder, setFounder] = useState<Founder>(MOCK_FOUNDER);
+
+  const [activeTab, setActiveTab] = useState<'execs' | 'events' | 'projects' | 'lecturers' | 'founder'>('execs');
+  const [showSessionWizard, setShowSessionWizard] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  // Fetch initial sessions & founder
+  useEffect(() => {
+    async function loadAdminData() {
+      if (supabase) {
+        try {
+          const { data: founderData } = await supabase.from('founder').select('*').limit(1).single();
+          if (founderData) setFounder(founderData);
+
+          const { data: sessionData } = await supabase
+            .from('academic_sessions')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+          if (sessionData && sessionData.length > 0) {
+            setSessions(sessionData);
+            if (!selectedSession || !sessionData.find((s) => s.id === selectedSession.id)) {
+              setSelectedSession(sessionData[0]);
+            }
+          }
+        } catch (err) {
+          console.error('Supabase admin fetch error', err);
+        }
+      }
+    }
+    loadAdminData();
+  }, [refreshTrigger]);
+
+  // Fetch session-scoped content
+  useEffect(() => {
+    async function loadSessionScopedContent() {
+      if (!selectedSession) return;
+      const sId = selectedSession.id;
+
+      if (supabase) {
+        try {
+          const [execRes, eventRes, projectRes, lecRes] = await Promise.all([
+            supabase.from('executive_members').select('*').eq('session_id', sId).order('display_order', { ascending: true }),
+            supabase.from('events').select('*').eq('session_id', sId).order('event_date', { ascending: false }),
+            supabase.from('projects').select('*').eq('session_id', sId).order('display_order', { ascending: true }),
+            supabase.from('lecturers').select('*').eq('session_id', sId).order('display_order', { ascending: true }),
+          ]);
+
+          setExecutives(execRes.data || MOCK_EXECUTIVE_MEMBERS[sId] || []);
+          setEvents(eventRes.data || MOCK_EVENTS[sId] || []);
+          setProjects(projectRes.data || MOCK_PROJECTS[sId] || []);
+          setLecturers(lecRes.data || MOCK_LECTURERS[sId] || []);
+          return;
+        } catch (err) {
+          console.error('Supabase fetch error for session content', err);
+        }
+      }
+
+      setExecutives(MOCK_EXECUTIVE_MEMBERS[sId] || MOCK_EXECUTIVE_MEMBERS['22222222-2222-2222-2222-222222222222'] || []);
+      setEvents(MOCK_EVENTS[sId] || MOCK_EVENTS['22222222-2222-2222-2222-222222222222'] || []);
+      setProjects(MOCK_PROJECTS[sId] || MOCK_PROJECTS['22222222-2222-2222-2222-222222222222'] || []);
+      setLecturers(MOCK_LECTURERS[sId] || MOCK_LECTURERS['22222222-2222-2222-2222-222222222222'] || []);
+    }
+
+    loadSessionScopedContent();
+  }, [selectedSession, refreshTrigger]);
+
+  function handleSessionCreated(newSession: AcademicSession) {
+    setSessions((prev) => [newSession, ...prev]);
+    setSelectedSession(newSession);
+    setRefreshTrigger((prev) => prev + 1);
+  }
+
+  return (
+    <div className="min-h-screen bg-[#FDFDF8] text-[#1A1A1A] flex flex-col">
+      
+      {/* Top Admin Navigation Header */}
+      <header className="bg-[#1A4D2E] text-white border-b-2 border-[#C9A227] sticky top-0 z-40 shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            
+            <div className="flex items-center gap-4">
+              <Link
+                href="/"
+                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors flex items-center gap-1.5 text-xs font-bold"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span className="hidden sm:inline">Back to Public Site</span>
+              </Link>
+
+              <div className="h-6 w-px bg-white/20 hidden sm:block"></div>
+
+              <div>
+                <h1 className="font-ceremonial text-2xl font-bold text-[#C9A227] leading-none">
+                  AHEFSS Control Panel
+                </h1>
+                <p className="text-[11px] text-gray-200 mt-0.5">
+                  Multi-Session Archival & Content Manager
+                </p>
+              </div>
+            </div>
+
+            {/* Session Selector & Wizard Button */}
+            <div className="flex items-center gap-3">
+              
+              {/* Active Edited Session Selector */}
+              <div className="relative">
+                <select
+                  value={selectedSession.id}
+                  onChange={(e) => {
+                    const s = sessions.find((item) => item.id === e.target.value);
+                    if (s) setSelectedSession(s);
+                  }}
+                  className="bg-[#0F3320] text-white border border-[#C9A227] rounded-xl px-3 py-2 text-xs font-bold cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#C9A227]"
+                >
+                  {sessions.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.session_code} — {s.theme_title} {s.is_pioneer ? '(Pioneer - Locked)' : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Create Session Button */}
+              <button
+                onClick={() => setShowSessionWizard(true)}
+                className="px-3.5 py-2 rounded-xl bg-[#C9A227] text-[#1A4D2E] text-xs font-bold hover:bg-[#d6b033] transition-colors flex items-center gap-1.5 cursor-pointer shadow-md"
+              >
+                <PlusCircle className="w-4 h-4" />
+                <span className="hidden sm:inline">New Session Wizard</span>
+              </button>
+
+              <Link
+                href="/admin/login"
+                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors"
+                title="Logout"
+              >
+                <LogOut className="w-4 h-4" />
+              </Link>
+            </div>
+
+          </div>
+        </div>
+      </header>
+
+      {/* Main Admin Dashboard Body */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        
+        {/* Selected Session Status Banner */}
+        <div className="bg-white rounded-3xl p-6 border border-[#C9A227]/30 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Editing Session</span>
+              {selectedSession.is_pioneer ? (
+                <span className="bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <Lock className="w-3 h-3 text-amber-700" /> Pioneer Administration (Locked)
+                </span>
+              ) : (
+                <span className="bg-emerald-100 text-emerald-900 border border-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <ShieldCheck className="w-3 h-3 text-emerald-700" /> Standard Editable Session
+                </span>
+              )}
+            </div>
+
+            <h2 className="font-ceremonial text-3xl font-bold text-[#1A4D2E] mt-1">
+              {selectedSession.session_code} — {selectedSession.theme_title}
+            </h2>
+          </div>
+
+          <div className="flex items-center gap-2 text-xs font-semibold text-gray-500">
+            <span className="bg-gray-100 px-3 py-1.5 rounded-xl border border-gray-200">
+              {executives.length} Execs
+            </span>
+            <span className="bg-gray-100 px-3 py-1.5 rounded-xl border border-gray-200">
+              {events.length} Events
+            </span>
+            <span className="bg-gray-100 px-3 py-1.5 rounded-xl border border-gray-200">
+              {projects.length} Projects
+            </span>
+          </div>
+        </div>
+
+        {/* Admin Navigation Tabs */}
+        <div className="flex items-center gap-2 border-b border-gray-200 pb-1 overflow-x-auto">
+          <button
+            onClick={() => setActiveTab('execs')}
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
+              activeTab === 'execs'
+                ? 'bg-[#1A4D2E] text-white shadow-md'
+                : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+            }`}
+          >
+            <Users className="w-4 h-4 text-[#C9A227]" />
+            <span>Executive Cabinet</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('events')}
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
+              activeTab === 'events'
+                ? 'bg-[#1A4D2E] text-white shadow-md'
+                : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+            }`}
+          >
+            <Calendar className="w-4 h-4 text-[#C9A227]" />
+            <span>Events & Lightbox Galleries</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('projects')}
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
+              activeTab === 'projects'
+                ? 'bg-[#1A4D2E] text-white shadow-md'
+                : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+            }`}
+          >
+            <FolderGit2 className="w-4 h-4 text-[#C9A227]" />
+            <span>Projects & Infrastructures</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('lecturers')}
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
+              activeTab === 'lecturers'
+                ? 'bg-[#1A4D2E] text-white shadow-md'
+                : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+            }`}
+          >
+            <GraduationCap className="w-4 h-4 text-[#C9A227]" />
+            <span>Lecturers & HOD</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('founder')}
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
+              activeTab === 'founder'
+                ? 'bg-[#1A4D2E] text-white shadow-md'
+                : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+            }`}
+          >
+            <Sparkles className="w-4 h-4 text-[#C9A227]" />
+            <span>Global Founder Credit</span>
+          </button>
+        </div>
+
+        {/* Tab Content Panels */}
+        <div className="pt-2">
+          {activeTab === 'execs' && (
+            <AdminExecManager
+              session={selectedSession}
+              executives={executives}
+              onRefresh={() => setRefreshTrigger((prev) => prev + 1)}
+            />
+          )}
+
+          {activeTab === 'events' && (
+            <AdminEventsManager
+              session={selectedSession}
+              events={events}
+              onRefresh={() => setRefreshTrigger((prev) => prev + 1)}
+            />
+          )}
+
+          {activeTab === 'projects' && (
+            <AdminProjectsManager
+              session={selectedSession}
+              projects={projects}
+              onRefresh={() => setRefreshTrigger((prev) => prev + 1)}
+            />
+          )}
+
+          {activeTab === 'lecturers' && (
+            <AdminLecturersManager
+              session={selectedSession}
+              lecturers={lecturers}
+              onRefresh={() => setRefreshTrigger((prev) => prev + 1)}
+            />
+          )}
+
+          {activeTab === 'founder' && (
+            <AdminFounderManager
+              founder={founder}
+              onRefresh={() => setRefreshTrigger((prev) => prev + 1)}
+            />
+          )}
+        </div>
+
+      </main>
+
+      {/* Session Creation Wizard Modal */}
+      {showSessionWizard && (
+        <AdminSessionWizard
+          onSessionCreated={handleSessionCreated}
+          onClose={() => setShowSessionWizard(false)}
+        />
+      )}
+
+    </div>
+  );
+}

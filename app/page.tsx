@@ -1,0 +1,160 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import {
+  AcademicSession,
+  ExecutiveMember,
+  EventItem,
+  ProjectItem,
+  Lecturer,
+  Founder,
+} from '@/lib/types';
+import {
+  supabase,
+  MOCK_FOUNDER,
+  MOCK_SESSIONS,
+  MOCK_EXECUTIVE_MEMBERS,
+  MOCK_EVENTS,
+  MOCK_PROJECTS,
+  MOCK_LECTURERS,
+} from '@/lib/supabase';
+
+import Navbar from '@/components/Navbar';
+import PresidentAddress from '@/components/PresidentAddress';
+import ExecutiveCabinet from '@/components/ExecutiveCabinet';
+import OurEvents from '@/components/OurEvents';
+import OurProjects from '@/components/OurProjects';
+import Lecturers from '@/components/Lecturers';
+import Footer from '@/components/Footer';
+
+export default function HomePage() {
+  const [sessions, setSessions] = useState<AcademicSession[]>(MOCK_SESSIONS);
+  const [selectedSession, setSelectedSession] = useState<AcademicSession>(MOCK_SESSIONS[0]);
+  
+  const [executives, setExecutives] = useState<ExecutiveMember[]>([]);
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [projects, setProjects] = useState<ProjectItem[]>([]);
+  const [lecturers, setLecturers] = useState<Lecturer[]>([]);
+  const [founder, setFounder] = useState<Founder>(MOCK_FOUNDER);
+
+  const [loading, setLoading] = useState(true);
+
+  // Fetch initial sessions & founder from Supabase (or fallback to Mock)
+  useEffect(() => {
+    async function loadInitialData() {
+      setLoading(true);
+      if (supabase) {
+        try {
+          // Fetch Founder
+          const { data: founderData } = await supabase.from('founder').select('*').limit(1).single();
+          if (founderData) setFounder(founderData);
+
+          // Fetch Academic Sessions
+          const { data: sessionData } = await supabase
+            .from('academic_sessions')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+          if (sessionData && sessionData.length > 0) {
+            setSessions(sessionData);
+            const active = sessionData.find((s) => s.is_active) || sessionData[0];
+            setSelectedSession(active);
+          }
+        } catch (err) {
+          console.error('Error fetching Supabase data, utilizing fallback state', err);
+        }
+      }
+      setLoading(false);
+    }
+
+    loadInitialData();
+  }, []);
+
+  // Fetch data scoped to the currently selected session
+  useEffect(() => {
+    async function loadSessionScopedData() {
+      if (!selectedSession) return;
+      const sId = selectedSession.id;
+
+      if (supabase) {
+        try {
+          const [execRes, eventRes, projectRes, lecRes] = await Promise.all([
+            supabase.from('executive_members').select('*').eq('session_id', sId).order('display_order', { ascending: true }),
+            supabase.from('events').select('*').eq('session_id', sId).order('event_date', { ascending: false }),
+            supabase.from('projects').select('*').eq('session_id', sId).order('display_order', { ascending: true }),
+            supabase.from('lecturers').select('*').eq('session_id', sId).order('display_order', { ascending: true }),
+          ]);
+
+          setExecutives(execRes.data || MOCK_EXECUTIVE_MEMBERS[sId] || []);
+          setEvents(eventRes.data || MOCK_EVENTS[sId] || []);
+          setProjects(projectRes.data || MOCK_PROJECTS[sId] || []);
+          setLecturers(lecRes.data || MOCK_LECTURERS[sId] || []);
+          return;
+        } catch (err) {
+          console.error('Error fetching session details, utilizing fallback state', err);
+        }
+      }
+
+      // Fallback mock data
+      setExecutives(MOCK_EXECUTIVE_MEMBERS[sId] || MOCK_EXECUTIVE_MEMBERS['22222222-2222-2222-2222-222222222222'] || []);
+      setEvents(MOCK_EVENTS[sId] || MOCK_EVENTS['22222222-2222-2222-2222-222222222222'] || []);
+      setProjects(MOCK_PROJECTS[sId] || MOCK_PROJECTS['22222222-2222-2222-2222-222222222222'] || []);
+      setLecturers(MOCK_LECTURERS[sId] || MOCK_LECTURERS['22222222-2222-2222-2222-222222222222'] || []);
+    }
+
+    loadSessionScopedData();
+  }, [selectedSession]);
+
+  const presidentMember = executives.find((e) => e.office_position.toLowerCase().includes('president') && !e.office_position.toLowerCase().includes('vice'));
+
+  return (
+    <div className="min-h-screen flex flex-col bg-[#FDFDF8] text-[#1A1A1A]">
+      
+      {/* Navbar with Session Toggle */}
+      <Navbar
+        sessions={sessions}
+        selectedSession={selectedSession}
+        onSelectSession={(s) => setSelectedSession(s)}
+      />
+
+      {/* Main Single-Page Scroll Content */}
+      <main className="flex-1">
+        
+        {/* Section 1: President's Address */}
+        <PresidentAddress
+          session={selectedSession}
+          president={presidentMember}
+        />
+
+        {/* Section 2: The Executive Cabinet */}
+        <ExecutiveCabinet
+          executives={executives}
+          themeTitle={selectedSession.theme_title}
+        />
+
+        {/* Section 3: Our Events (with Lightbox Gallery) */}
+        <OurEvents
+          events={events}
+          themeTitle={selectedSession.theme_title}
+        />
+
+        {/* Section 4: Our Projects (Case-Study Style Cards) */}
+        <OurProjects
+          projects={projects}
+          themeTitle={selectedSession.theme_title}
+        />
+
+        {/* Section 5: Lecturers & Faculty */}
+        <Lecturers
+          lecturers={lecturers}
+          themeTitle={selectedSession.theme_title}
+        />
+
+      </main>
+
+      {/* Footer with Persistent Founder Credit */}
+      <Footer founder={founder} />
+
+    </div>
+  );
+}
