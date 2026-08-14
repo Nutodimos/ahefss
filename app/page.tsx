@@ -31,10 +31,11 @@ export default function HomePage() {
   const [sessions, setSessions] = useState<AcademicSession[]>(MOCK_SESSIONS);
   const [selectedSession, setSelectedSession] = useState<AcademicSession>(MOCK_SESSIONS[0]);
   
-  const [executives, setExecutives] = useState<ExecutiveMember[]>([]);
-  const [events, setEvents] = useState<EventItem[]>([]);
-  const [projects, setProjects] = useState<ProjectItem[]>([]);
-  const [lecturers, setLecturers] = useState<Lecturer[]>([]);
+  const pioneerKey = '22222222-2222-2222-2222-222222222222';
+  const [executives, setExecutives] = useState<ExecutiveMember[]>(MOCK_EXECUTIVE_MEMBERS[pioneerKey] || []);
+  const [events, setEvents] = useState<EventItem[]>(MOCK_EVENTS[pioneerKey] || []);
+  const [projects, setProjects] = useState<ProjectItem[]>(MOCK_PROJECTS[pioneerKey] || []);
+  const [lecturers, setLecturers] = useState<Lecturer[]>(MOCK_LECTURERS[pioneerKey] || []);
   const [founder, setFounder] = useState<Founder>(MOCK_FOUNDER);
 
   const [loading, setLoading] = useState(true);
@@ -75,6 +76,16 @@ export default function HomePage() {
     async function loadSessionScopedData() {
       if (!selectedSession) return;
       const sId = selectedSession.id;
+      const isPioneer = selectedSession.is_pioneer || sId === '22222222-2222-2222-2222-222222222222';
+
+      // Helper: picks Supabase data if non-empty; for pioneer session, falls back to mock data if empty; for new sessions, returns empty array
+      const withFallback = <T,>(supabaseData: T[] | null, mockMap: Record<string, T[]>): T[] => {
+        if (supabaseData && supabaseData.length > 0) return supabaseData;
+        if (isPioneer) {
+          return mockMap[sId] || mockMap['22222222-2222-2222-2222-222222222222'] || [];
+        }
+        return [];
+      };
 
       if (supabase) {
         try {
@@ -85,46 +96,28 @@ export default function HomePage() {
             supabase.from('lecturers').select('*').eq('session_id', sId).order('display_order', { ascending: true }),
           ]);
 
-          const isPioneer = selectedSession.is_pioneer;
-          setExecutives(
-            execRes.data && execRes.data.length > 0 
-              ? execRes.data 
-              : isPioneer 
-                ? (MOCK_EXECUTIVE_MEMBERS[sId] || MOCK_EXECUTIVE_MEMBERS['22222222-2222-2222-2222-222222222222'] || [])
-                : []
-          );
-          setEvents(
-            eventRes.data && eventRes.data.length > 0 
-              ? eventRes.data 
-              : isPioneer 
-                ? (MOCK_EVENTS[sId] || MOCK_EVENTS['22222222-2222-2222-2222-222222222222'] || [])
-                : []
-          );
-          setProjects(
-            projectRes.data && projectRes.data.length > 0 
-              ? projectRes.data 
-              : isPioneer 
-                ? (MOCK_PROJECTS[sId] || MOCK_PROJECTS['22222222-2222-2222-2222-222222222222'] || [])
-                : []
-          );
-          setLecturers(
-            lecRes.data && lecRes.data.length > 0 
-              ? lecRes.data 
-              : isPioneer 
-                ? (MOCK_LECTURERS[sId] || MOCK_LECTURERS['22222222-2222-2222-2222-222222222222'] || [])
-                : []
-          );
+          setExecutives(withFallback(execRes.data, MOCK_EXECUTIVE_MEMBERS));
+          setEvents(withFallback(eventRes.data, MOCK_EVENTS));
+          setProjects(withFallback(projectRes.data, MOCK_PROJECTS));
+          setLecturers(withFallback(lecRes.data, MOCK_LECTURERS));
           return;
         } catch (err) {
           console.error('Error fetching session details, utilizing fallback state', err);
         }
       }
 
-      // Fallback mock data
-      setExecutives(MOCK_EXECUTIVE_MEMBERS[sId] || MOCK_EXECUTIVE_MEMBERS['22222222-2222-2222-2222-222222222222'] || []);
-      setEvents(MOCK_EVENTS[sId] || MOCK_EVENTS['22222222-2222-2222-2222-222222222222'] || []);
-      setProjects(MOCK_PROJECTS[sId] || MOCK_PROJECTS['22222222-2222-2222-2222-222222222222'] || []);
-      setLecturers(MOCK_LECTURERS[sId] || MOCK_LECTURERS['22222222-2222-2222-2222-222222222222'] || []);
+      // Full offline fallback
+      if (isPioneer) {
+        setExecutives(MOCK_EXECUTIVE_MEMBERS[sId] || MOCK_EXECUTIVE_MEMBERS['22222222-2222-2222-2222-222222222222'] || []);
+        setEvents(MOCK_EVENTS[sId] || MOCK_EVENTS['22222222-2222-2222-2222-222222222222'] || []);
+        setProjects(MOCK_PROJECTS[sId] || MOCK_PROJECTS['22222222-2222-2222-2222-222222222222'] || []);
+        setLecturers(MOCK_LECTURERS[sId] || MOCK_LECTURERS['22222222-2222-2222-2222-222222222222'] || []);
+      } else {
+        setExecutives([]);
+        setEvents([]);
+        setProjects([]);
+        setLecturers([]);
+      }
     }
 
     loadSessionScopedData();

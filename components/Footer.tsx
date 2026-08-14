@@ -60,7 +60,7 @@ export default function Footer({ founder }: FooterProps) {
               <div>
                 <div className="flex items-center justify-center sm:justify-start gap-1.5 text-[11px] font-bold text-[#C9A227] uppercase tracking-wider">
                   <Sparkles className="w-3 h-3" />
-                  <span>Persistent Founder Credit</span>
+                  <span>Founder Credit</span>
                 </div>
                 <h4 className="font-ceremonial text-lg font-bold text-white">
                   Elevation Era · Founded by {founder.full_name}

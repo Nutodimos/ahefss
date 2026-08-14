@@ -39,7 +39,7 @@ export default function Lecturers({ lecturers, themeTitle }: LecturersProps) {
           className="text-center mb-14"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
+          viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A4D2E]/10 border border-[#C9A227]/40 text-[#1A4D2E] text-xs font-semibold uppercase tracking-wider mb-3">
@@ -62,7 +62,7 @@ export default function Lecturers({ lecturers, themeTitle }: LecturersProps) {
             <motion.div
               initial={{ opacity: 0, scale: 0.92, y: 30 }}
               whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
+              viewport={{ once: true }}
               transition={{ duration: 0.6, ease: [0, 0, 0.2, 1] }}
               className="bg-white rounded-3xl p-8 shadow-xl border border-[#C9A227]/40 text-center relative overflow-hidden"
             >

@@ -23,8 +23,8 @@ export default function PresidentAddress({
   const photoUrl = PRESIDENT_SPEECH_PHOTO_URL;
   
   const defaultMessage = welcomeMessage || (session.is_pioneer
-    ? `Welcome, AHEFFSITES!\nOn behalf of the founding team of The Elevation Era, I am thrilled to welcome you...`
-    : `Welcome to the official portal for the ${session.session_code} academic session (${session.theme_title})...`);
+    ? `Welcome, AHEFFSITES!\nOn behalf of the founding team of The Elevation Era, I am thrilled to welcome you to the official digital portal of the Association of Home Economics and Food Science Students (AHEFSS).\n\nWhen this administration took office, our core mission was encapsulated in our name: to elevate the standard of our department across all fronts. Achieving this was no small task, but by God's grace and through the unwavering support of our Head of Department, our Staff Adviser, our esteemed lecturers, a dedicated executive council, and the entire AHEFSSITE body, we were able to push boundaries and do better.\n\nThe creation of this website stems from a critical challenge we identified: a persistent gap in information regarding the association's work. For too long, many students were unaware of the association's active presence, let alone the impactful programs and events being organized for their growth.\n\nWe built this platform to change that narrative permanently. This platform serves three vital purposes:\n1. A Living Showcase: To bring visibility to every event, workshop, and project carried out for the benefit of our students.\n2. A Permanent Legacy Archive: To ensure that the history, hard work, and milestones of our association are preserved for years to come—far beyond traditional paper handover forms.\n3. A Blueprint for Future Leadership: To provide incoming administrations with a clear view of what has been accomplished, setting a benchmark that inspires higher participation and even greater achievements in every new academic session.\n\nThis portal represents the bedrock of our legacy. As you explore the achievements of The Elevation Era, I hope it fills you with pride in our department and inspires you to actively engage with the association moving forward.\n\nWelcome aboard, and keep elevating!`
+    : `Welcome to the official portal for the ${session.session_code} academic session (${session.theme_title}). We are committed to transparency, legacy, and continuous elevation of our department.`);
 
   const paragraphs = defaultMessage.split('\n\n');
   const initialParagraphs = paragraphs.slice(0, 3);
@@ -44,7 +44,7 @@ export default function PresidentAddress({
           className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.5 }}
+          viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6 }}
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A4D2E]/10 border border-[#C9A227]/40 text-[#1A4D2E] text-xs font-semibold uppercase tracking-wider mb-3">
@@ -61,7 +61,7 @@ export default function PresidentAddress({
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.7, ease: [0, 0, 0.2, 1] }}
           className="max-w-4xl mx-auto bg-white rounded-3xl p-6 sm:p-10 shadow-xl border border-[#C9A227]/30 relative"
         >

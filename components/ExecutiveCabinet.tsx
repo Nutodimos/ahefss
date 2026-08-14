@@ -38,35 +38,39 @@ export default function ExecutiveCabinet({
     <section id="executives" className="py-16 md:py-24 bg-white border-b border-[#C9A227]/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* Section Title */}
+        {/* Section Header */}
         <motion.div
-          className="text-center mb-14"
-          variants={headerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.4 }}
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6 }}
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A4D2E]/10 border border-[#C9A227]/40 text-[#1A4D2E] text-xs font-semibold uppercase tracking-wider mb-3">
             <Users className="w-3.5 h-3.5 text-[#C9A227]" />
-            <span>Leadership Council</span>
+            <span>Leadership Team</span>
           </div>
           <h2 className="font-ceremonial text-4xl sm:text-5xl font-bold text-[#1A4D2E]">
-            The Executive Cabinet
+            Executive Cabinet
           </h2>
           <p className="mt-3 text-sm sm:text-base text-gray-600 max-w-2xl mx-auto">
-            The dedicated team of leaders serving {themeTitle}. Click any member to connect directly via WhatsApp.
+            The dedicated student leaders who serve the {themeTitle} administration.
           </p>
           <div className="w-24 h-1 bg-[#C9A227] mx-auto mt-4 rounded-full"></div>
         </motion.div>
 
-        {/* 4-col desktop / 2-col tablet / 1-col mobile Grid */}
-        <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
-        >
+        {sortedExecs.length === 0 ? (
+          <div className="text-center py-12 bg-white rounded-3xl border border-gray-200">
+            <p className="text-gray-500 font-medium">No executive members listed yet.</p>
+          </div>
+        ) : (
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+          >
           {sortedExecs.map((exec) => {
             const formattedWhatsApp = exec.whatsapp_url || `https://wa.me/2348000000000?text=Hello%20${encodeURIComponent(exec.full_name)}`;
 
@@ -127,7 +131,8 @@ export default function ExecutiveCabinet({
               </motion.a>
             );
           })}
-        </motion.div>
+          </motion.div>
+        )}
 
       </div>
     </section>

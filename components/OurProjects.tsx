@@ -25,7 +25,7 @@ export default function OurProjects({ projects, themeTitle }: OurProjectsProps) 
           className="text-center mb-16"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
+          viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6 }}
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A4D2E]/10 border border-[#C9A227]/40 text-[#1A4D2E] text-xs font-semibold uppercase tracking-wider mb-3">
@@ -55,7 +55,7 @@ export default function OurProjects({ projects, themeTitle }: OurProjectsProps) 
                   key={project.id}
                   initial={{ opacity: 0, x: isEven ? -40 : 40 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, amount: 0.2 }}
+                  viewport={{ once: true, margin: "-50px" }}
                   transition={{ duration: 0.7, ease: [0, 0, 0.2, 1] }}
                   whileHover={{ boxShadow: '0 25px 50px -12px rgba(26, 77, 46, 0.15)' }}
                   className="bg-[#FDFDF8] rounded-3xl p-6 sm:p-10 border border-[#C9A227]/30 shadow-lg transition-all duration-300 relative overflow-hidden"
