@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Founder } from '@/lib/types';
 import { getOptimizedImageUrl } from '@/lib/cloudinary';
+import { LOGO_URL } from '@/lib/assets';
 import { Sparkles, Shield, Heart, X, BookOpen, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
@@ -16,16 +17,16 @@ export default function Footer({ founder }: FooterProps) {
   return (
     <footer className="bg-[#0F3320] text-white pt-16 pb-12 border-t-4 border-[#C9A227]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        
+
         {/* Main Footer Row */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center pb-12 border-b border-white/10">
-          
+
           {/* Association Branding */}
           <div className="md:col-span-5 space-y-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full overflow-hidden ring-gold p-[2px] bg-white">
                 <img
-                  src="/assets/logo.jpg"
+                  src={LOGO_URL}
                   alt="AHEFSS Logo"
                   className="w-full h-full object-cover rounded-full"
                 />
@@ -46,12 +47,12 @@ export default function Footer({ founder }: FooterProps) {
 
           {/* Persistent Global Founder Credit Box (NOT session-scoped) */}
           <div className="md:col-span-7 bg-white/5 backdrop-blur-md rounded-2xl p-5 border border-[#C9A227]/40 flex flex-col sm:flex-row items-center justify-between gap-4">
-            
+
             <div className="flex items-center gap-4 text-center sm:text-left">
               {/* Small Circular Photo with Gold Ring */}
               <div className="relative w-14 h-14 rounded-full p-[2px] bg-[#C9A227] shadow-md flex-shrink-0">
                 <img
-                  src={getOptimizedImageUrl(founder.photo_url || '/assets/logo.jpg', { type: 'headshot', width: 200 })}
+                  src={getOptimizedImageUrl(founder.photo_url || LOGO_URL, { type: 'headshot', width: 200 })}
                   alt={founder.full_name}
                   className="w-full h-full object-cover rounded-full"
                 />
@@ -132,7 +133,7 @@ export default function Footer({ founder }: FooterProps) {
               </div>
               <div>
                 <span className="text-xs font-bold text-[#C9A227] uppercase tracking-wider">
-                  Permanent Founder Credit
+                  Founder Credit
                 </span>
                 <h3 className="font-ceremonial text-2xl font-bold text-[#1A4D2E]">
                   {founder.full_name}

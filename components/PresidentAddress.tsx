@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { AcademicSession, ExecutiveMember } from '@/lib/types';
 import { Quote, ChevronRight, Award } from 'lucide-react';
+import { PRESIDENT_SPEECH_PHOTO_URL } from '@/lib/assets';
 
 interface PresidentAddressProps {
   session: AcademicSession;
@@ -18,7 +19,7 @@ export default function PresidentAddress({
   const [isExpanded, setIsExpanded] = useState(false);
 
   const presidentName = president?.full_name || (session.is_pioneer ? 'Abdulwarees' : 'President');
-  const photoUrl = president?.photo_url || '/assets/logo.jpg';
+  const photoUrl = PRESIDENT_SPEECH_PHOTO_URL;
   
   const defaultMessage = welcomeMessage || (session.is_pioneer
     ? `Welcome, AHEFFSITES!\nOn behalf of the founding team of The Elevation Era, I am thrilled to welcome you to the official digital portal of the Association of Home Economics and Food Science Students (AHEFSS).\n\nWhen this administration took office, our core mission was encapsulated in our name: to elevate the standard of our department across all fronts. Achieving this was no small task, but by God's grace and through the unwavering support of our Head of Department, our Staff Adviser, our esteemed lecturers, a dedicated executive council, and the entire AHEFSSITE body, we were able to push boundaries and do better.\n\nThe creation of this website stems from a critical challenge we identified: a persistent gap in information regarding the association's work. For too long, many students were unaware of the association's active presence, let alone the impactful programs and events being organized for their growth. This lack of awareness often led to low participation, and worse, left many of our finest achievements lost to time without a historical record.\n\nWe built this platform to change that narrative permanently. Even as we work toward building higher student engagement, every AHEFSSITE deserves to know that programs are being actively executed for their academic, professional, and social development. This platform serves three vital purposes:\n\n1. A Living Showcase: To bring visibility to every event, workshop, and project carried out for the benefit of our students.\n2. A Permanent Legacy Archive: To ensure that the history, hard work, and milestones of our association are preserved for years to come—far beyond traditional paper handover forms.\n3. A Blueprint for Future Leadership: To provide incoming administrations with a clear view of what has been accomplished, setting a benchmark that inspires higher participation and even greater achievements in every new academic session.\n\nThis portal represents the bedrock of our legacy. As you explore the achievements of The Elevation Era, I hope it fills you with pride in our department and inspires you to actively engage with the association moving forward.\n\nWelcome aboard, and keep elevating!`
@@ -62,7 +63,7 @@ export default function PresidentAddress({
                 <img
                   src={photoUrl}
                   alt={presidentName}
-                  className="w-full h-full object-cover rounded-full ring-2 ring-white"
+                  className="w-full h-full object-cover object-top rounded-full ring-2 ring-white"
                 />
               </div>
               <div className="mt-4">

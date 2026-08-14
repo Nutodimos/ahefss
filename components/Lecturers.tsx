@@ -3,6 +3,7 @@
 import React from 'react';
 import { Lecturer } from '@/lib/types';
 import { getOptimizedImageUrl } from '@/lib/cloudinary';
+import { ADMIN_LOGO_URL } from '@/lib/assets';
 import { GraduationCap, Award, BookOpen } from 'lucide-react';
 
 interface LecturersProps {
@@ -51,7 +52,7 @@ export default function Lecturers({ lecturers, themeTitle }: LecturersProps) {
                 {/* HOD Featured Photo Frame with Gold Ring */}
                 <div className="relative w-40 h-40 rounded-full p-1 bg-gradient-to-tr from-[#C9A227] via-[#1A4D2E] to-[#C9A227] shadow-lg mb-4">
                   <img
-                    src={getOptimizedImageUrl(hod.photo_url || '/assets/logo.jpg', { type: 'headshot', width: 400 })}
+                    src={getOptimizedImageUrl(hod.photo_url || ADMIN_LOGO_URL, { type: 'headshot', width: 400 })}
                     alt={hod.full_name}
                     className="w-full h-full object-cover rounded-full ring-2 ring-white"
                   />

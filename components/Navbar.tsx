@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { AcademicSession } from '@/lib/types';
 import { ChevronDown, Lock, Sparkles, UserCheck, Menu, X, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
+import { ADMIN_LOGO_URL, LOGO_URL } from '@/lib/assets';
 
 interface NavbarProps {
   sessions: AcademicSession[];
@@ -52,12 +53,12 @@ export default function Navbar({
     <header className="sticky top-0 z-50 glass-nav shadow-sm transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          
+
           {/* Logo & Association Branding */}
           <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group">
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden ring-gold p-[2px] bg-[#1A4D2E] transition-transform duration-300 group-hover:scale-105 flex-shrink-0">
               <img
-                src="/assets/logo.jpg"
+                src={ADMIN_LOGO_URL}
                 alt="AHEFSS Logo"
                 className="w-full h-full object-cover rounded-full"
               />
@@ -83,11 +84,10 @@ export default function Navbar({
                 <a
                   key={sec.id}
                   href={`#${sec.id}`}
-                  className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-200 ${
-                    isActive
-                      ? 'bg-[#1A4D2E] text-white shadow-sm ring-1 ring-[#C9A227]'
-                      : 'text-gray-700 hover:text-[#1A4D2E] hover:bg-gray-100/60'
-                  }`}
+                  className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-200 ${isActive
+                    ? 'bg-[#1A4D2E] text-white shadow-sm ring-1 ring-[#C9A227]'
+                    : 'text-gray-700 hover:text-[#1A4D2E] hover:bg-gray-100/60'
+                    }`}
                 >
                   {sec.label}
                 </a>
@@ -97,7 +97,7 @@ export default function Navbar({
 
           {/* Session Switcher Pill & Controls */}
           <div className="flex items-center gap-2 sm:gap-3">
-            
+
             {/* Session Switcher Dropdown */}
             <div className="relative">
               <button
@@ -119,7 +119,7 @@ export default function Navbar({
 
               {/* Dropdown Menu */}
               {dropdownOpen && (
-                <div 
+                <div
                   className="absolute right-0 mt-2 w-64 sm:w-72 rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 py-2 z-50 border border-[#C9A227]/30 divide-y divide-gray-100"
                   onMouseLeave={() => setDropdownOpen(false)}
                 >
@@ -139,11 +139,10 @@ export default function Navbar({
                             onSelectSession(session);
                             setDropdownOpen(false);
                           }}
-                          className={`w-full text-left px-4 py-2.5 text-xs sm:text-sm flex items-center justify-between transition-colors cursor-pointer ${
-                            isCurrentSelected
-                              ? 'bg-[#1A4D2E]/10 text-[#1A4D2E] font-bold border-l-4 border-[#C9A227]'
-                              : 'text-gray-700 hover:bg-gray-50'
-                          }`}
+                          className={`w-full text-left px-4 py-2.5 text-xs sm:text-sm flex items-center justify-between transition-colors cursor-pointer ${isCurrentSelected
+                            ? 'bg-[#1A4D2E]/10 text-[#1A4D2E] font-bold border-l-4 border-[#C9A227]'
+                            : 'text-gray-700 hover:bg-gray-50'
+                            }`}
                         >
                           <div>
                             <div className="font-semibold text-gray-900 flex items-center gap-1.5">
@@ -206,11 +205,10 @@ export default function Navbar({
                     key={sec.id}
                     href={`#${sec.id}`}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`p-3 rounded-xl transition-all flex items-center justify-between ${
-                      isActive
-                        ? 'bg-[#1A4D2E] text-white font-bold shadow-sm'
-                        : 'hover:bg-gray-100 text-gray-700'
-                    }`}
+                    className={`p-3 rounded-xl transition-all flex items-center justify-between ${isActive
+                      ? 'bg-[#1A4D2E] text-white font-bold shadow-sm'
+                      : 'hover:bg-gray-100 text-gray-700'
+                      }`}
                   >
                     <span>{sec.label}</span>
                     {isActive && <span className="w-2 h-2 rounded-full bg-[#C9A227]"></span>}
