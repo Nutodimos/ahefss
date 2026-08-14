@@ -100,10 +100,35 @@ export default function AdminDashboardPage() {
             supabase.from('lecturers').select('*').eq('session_id', sId).order('display_order', { ascending: true }),
           ]);
 
-          setExecutives(execRes.data || MOCK_EXECUTIVE_MEMBERS[sId] || []);
-          setEvents(eventRes.data || MOCK_EVENTS[sId] || []);
-          setProjects(projectRes.data || MOCK_PROJECTS[sId] || []);
-          setLecturers(lecRes.data || MOCK_LECTURERS[sId] || []);
+          const isPioneer = selectedSession.is_pioneer;
+          setExecutives(
+            execRes.data && execRes.data.length > 0 
+              ? execRes.data 
+              : isPioneer 
+                ? (MOCK_EXECUTIVE_MEMBERS[sId] || MOCK_EXECUTIVE_MEMBERS['22222222-2222-2222-2222-222222222222'] || [])
+                : []
+          );
+          setEvents(
+            eventRes.data && eventRes.data.length > 0 
+              ? eventRes.data 
+              : isPioneer 
+                ? (MOCK_EVENTS[sId] || MOCK_EVENTS['22222222-2222-2222-2222-222222222222'] || [])
+                : []
+          );
+          setProjects(
+            projectRes.data && projectRes.data.length > 0 
+              ? projectRes.data 
+              : isPioneer 
+                ? (MOCK_PROJECTS[sId] || MOCK_PROJECTS['22222222-2222-2222-2222-222222222222'] || [])
+                : []
+          );
+          setLecturers(
+            lecRes.data && lecRes.data.length > 0 
+              ? lecRes.data 
+              : isPioneer 
+                ? (MOCK_LECTURERS[sId] || MOCK_LECTURERS['22222222-2222-2222-2222-222222222222'] || [])
+                : []
+          );
           return;
         } catch (err) {
           console.error('Supabase fetch error for session content', err);

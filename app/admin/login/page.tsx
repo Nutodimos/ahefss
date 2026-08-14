@@ -3,13 +3,14 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { Mail, Lock, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Mail, Lock, ArrowRight, ShieldCheck, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -19,24 +20,42 @@ export default function AdminLoginPage() {
     setErrorMsg(null);
 
     if (!supabase) {
-      setErrorMsg('Database client connection is not configured.');
+      setErrorMsg('Database connection is not configured. Please check your environment variables.');
       setLoading(false);
       return;
     }
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password,
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
 
-    if (error) {
-      setErrorMsg(error.message);
+      if (error) {
+        const msg = error.message.toLowerCase();
+        if (msg.includes('email not confirmed')) {
+          setErrorMsg('Email address not confirmed yet! Please go to your Supabase Dashboard -> Authentication -> Users -> click "Confirm Email" for ahefsswork@gmail.com (or disable "Confirm email" under Auth Settings -> Email).');
+        } else if (msg.includes('failed to fetch')) {
+          setErrorMsg('Failed to connect to Supabase. Please ensure your dev server has loaded .env.local (restart npm run dev).');
+        } else {
+          setErrorMsg(error.message);
+        }
+        setLoading(false);
+        return;
+      }
+
+      if (data.session) {
+        router.replace('/admin');
+        router.refresh();
+      } else {
+        setErrorMsg('Could not start session. Please try again.');
+        setLoading(false);
+      }
+    } catch (err: any) {
+      console.error('Login error:', err);
+      setErrorMsg(err?.message || 'Network error: Failed to connect to authentication service.');
       setLoading(false);
-      return;
     }
-
-    // Redirect securely to admin dashboard
-    window.location.href = '/admin';
   }
 
   return (
@@ -61,7 +80,7 @@ export default function AdminLoginPage() {
           <form className="space-y-6" onSubmit={handleLogin}>
             
             {errorMsg && (
-              <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold">
+              <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold leading-relaxed">
                 {errorMsg}
               </div>
             )}
@@ -94,13 +113,21 @@ export default function AdminLoginPage() {
                   <Lock className="h-4 w-4" />
                 </div>
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1A4D2E]"
+                  className="block w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1A4D2E]"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-[#1A4D2E] transition-colors cursor-pointer"
+                  title={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
             </div>
 
