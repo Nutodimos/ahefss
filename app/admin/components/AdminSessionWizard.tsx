@@ -35,6 +35,13 @@ export default function AdminSessionWizard({
     };
 
     if (supabase) {
+      if (isActive) {
+        await supabase
+          .from('academic_sessions')
+          .update({ is_active: false })
+          .neq('id', newSessionData.id);
+      }
+
       const { data, error } = await supabase
         .from('academic_sessions')
         .insert([newSessionData])

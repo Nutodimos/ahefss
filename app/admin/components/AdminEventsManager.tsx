@@ -5,7 +5,7 @@ import { AcademicSession, EventItem } from '@/lib/types';
 import { supabase } from '@/lib/supabase';
 import { getOptimizedImageUrl } from '@/lib/cloudinary';
 import CloudinaryUploadWidget from '@/components/CloudinaryUploadWidget';
-import { Lock, Plus, Trash2, ShieldAlert } from 'lucide-react';
+import { Lock, Plus, Trash2, ShieldAlert, Edit2, X, Check } from 'lucide-react';
 
 interface AdminEventsManagerProps {
   session: AcademicSession;
@@ -18,53 +18,74 @@ export default function AdminEventsManager({
   events,
   onRefresh,
 }: AdminEventsManagerProps) {
+  const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [title, setTitle] = useState('');
   const [eventType, setEventType] = useState('Workshop');
   const [eventDate, setEventDate] = useState('2026-06-01');
   const [flyerUrl, setFlyerUrl] = useState('/assets/department_project.jpg');
   const [summaryText, setSummaryText] = useState('');
-  const [galleryUrls, setGalleryUrls] = useState('');
+  const [gallery, setGallery] = useState<string[]>([]);
   const [attendeesCount, setAttendeesCount] = useState(150);
   const [loading, setLoading] = useState(false);
 
   const isLocked = session.is_pioneer;
 
-  async function handleAddEvent(e: React.FormEvent) {
+  function resetForm() {
+    setEditingEventId(null);
+    setTitle('');
+    setEventType('Workshop');
+    setEventDate('2026-06-01');
+    setFlyerUrl('/assets/department_project.jpg');
+    setSummaryText('');
+    setGallery([]);
+    setAttendeesCount(150);
+  }
+
+  function handleEditClick(eventItem: EventItem) {
+    setEditingEventId(eventItem.id);
+    setTitle(eventItem.title);
+    setEventType(eventItem.event_type);
+    setEventDate(eventItem.event_date);
+    setFlyerUrl(eventItem.flyer_banner_url || '/assets/department_project.jpg');
+    setSummaryText(eventItem.summary_text || '');
+    setGallery(eventItem.photo_gallery || []);
+    setAttendeesCount(eventItem.attendees_count || 0);
+  }
+
+  async function handleSaveEvent(e: React.FormEvent) {
     e.preventDefault();
     if (isLocked) return;
 
     setLoading(true);
 
-    const photos = galleryUrls
-      .split(',')
-      .map((s) => s.trim())
-      .filter((s) => s.length > 0);
-
-    const newEvent = {
-      id: crypto.randomUUID(),
+    const eventPayload = {
       session_id: session.id,
       title: title.trim(),
       event_type: eventType.trim(),
       event_date: eventDate,
       flyer_banner_url: flyerUrl.trim(),
       summary_text: summaryText.trim(),
-      photo_gallery: photos,
+      photo_gallery: gallery,
       attendees_count: Number(attendeesCount),
     };
 
     if (supabase) {
-      await supabase.from('events').insert([newEvent]);
+      if (editingEventId) {
+        await supabase.from('events').update(eventPayload).eq('id', editingEventId);
+      } else {
+        await supabase.from('events').insert([{ id: crypto.randomUUID(), ...eventPayload }]);
+      }
     }
 
-    setTitle('');
-    setSummaryText('');
-    setGalleryUrls('');
+    resetForm();
     setLoading(false);
     onRefresh();
   }
 
-  async function handleDeleteEvent(id: string) {
+  async function handleDeleteEvent(id: string, titleName: string) {
     if (isLocked) return;
+    if (!window.confirm(`Are you sure you want to delete the event "${titleName}"?`)) return;
+
     if (supabase) {
       await supabase.from('events').delete().eq('id', id);
     }
@@ -83,14 +104,25 @@ export default function AdminEventsManager({
         </div>
       )}
 
-      {/* Add New Event Form */}
+      {/* Add / Edit Event Form */}
       <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-4">
-        <h3 className="text-sm font-bold text-[#1A4D2E] uppercase tracking-wider flex items-center gap-2">
-          <Plus className="w-4 h-4 text-[#C9A227]" />
-          <span>Add New Event ({session.session_code})</span>
-        </h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-bold text-[#1A4D2E] uppercase tracking-wider flex items-center gap-2">
+            {editingEventId ? <Edit2 className="w-4 h-4 text-[#C9A227]" /> : <Plus className="w-4 h-4 text-[#C9A227]" />}
+            <span>{editingEventId ? 'Edit Event Details & Gallery' : `Add New Event (${session.session_code})`}</span>
+          </h3>
 
-        <form onSubmit={handleAddEvent} className="space-y-4">
+          {editingEventId && (
+            <button
+              onClick={resetForm}
+              className="text-xs font-bold text-gray-500 hover:text-gray-700 flex items-center gap-1 cursor-pointer"
+            >
+              <X className="w-4 h-4" /> Cancel Edit
+            </button>
+          )}
+        </div>
+
+        <form onSubmit={handleSaveEvent} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <input
               type="text"
@@ -155,25 +187,31 @@ export default function AdminEventsManager({
             className="w-full px-3.5 py-2 border border-gray-300 rounded-xl text-xs disabled:bg-gray-100 disabled:opacity-60"
           />
 
-          {/* Direct Cloudinary Upload Component for Gallery Photos */}
+          {/* Multi-Image Cloudinary Gallery Uploader */}
           <CloudinaryUploadWidget
-            label="Event Photo Gallery Images (Multiple)"
-            value={galleryUrls}
+            label="Event Photo Gallery (Batch Upload & Individual Removes)"
             multiple={true}
-            onChange={(url) => setGalleryUrls(url)}
-            onMultipleChange={(urls) => {
-              const current = galleryUrls ? galleryUrls.split(',').map((s) => s.trim()) : [];
-              setGalleryUrls([...current, ...urls].join(', '));
-            }}
+            gallery={gallery}
+            onGalleryChange={(urls) => setGallery(urls)}
           />
 
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-3">
+            {editingEventId && (
+              <button
+                type="button"
+                onClick={resetForm}
+                className="px-4 py-2.5 rounded-xl border border-gray-300 text-gray-700 text-xs font-bold hover:bg-gray-50 cursor-pointer"
+              >
+                Cancel
+              </button>
+            )}
             <button
               type="submit"
               disabled={isLocked || loading}
-              className="px-5 py-2.5 rounded-xl bg-[#1A4D2E] text-white text-xs font-bold hover:bg-[#0F3320] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shadow-md"
+              className="px-5 py-2.5 rounded-xl bg-[#1A4D2E] text-white text-xs font-bold hover:bg-[#0F3320] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shadow-md flex items-center gap-1.5"
             >
-              {isLocked ? 'Locked (Pioneer Session)' : 'Save Event & Gallery'}
+              {isLocked ? <Lock className="w-3.5 h-3.5" /> : <Check className="w-3.5 h-3.5" />}
+              <span>{isLocked ? 'Locked (Pioneer Session)' : editingEventId ? 'Update Event & Gallery' : 'Save Event & Gallery'}</span>
             </button>
           </div>
         </form>
@@ -192,27 +230,39 @@ export default function AdminEventsManager({
                 <img
                   src={getOptimizedImageUrl(ev.flyer_banner_url, { type: 'banner', width: 200 })}
                   alt={ev.title}
-                  className="w-16 h-12 rounded-lg object-cover border border-gray-200"
+                  className="w-16 h-12 rounded-lg object-cover border border-gray-200 flex-shrink-0"
                 />
                 <div>
                   <div className="text-sm font-bold text-gray-900">{ev.title}</div>
-                  <div className="text-xs text-gray-500 flex items-center gap-2 mt-0.5">
+                  <div className="text-xs text-gray-500 flex items-center gap-2 mt-0.5 flex-wrap">
                     <span className="text-[#1A4D2E] font-semibold">{ev.event_type}</span>
                     <span>•</span>
                     <span>{ev.event_date}</span>
                     <span>•</span>
-                    <span>{ev.photo_gallery?.length || 0} Gallery Photos</span>
+                    <span className="bg-amber-100 text-amber-900 px-2 py-0.5 rounded text-[10px] font-bold">
+                      {ev.photo_gallery?.length || 0} Gallery Photos
+                    </span>
                   </div>
                 </div>
               </div>
 
               {!isLocked && (
-                <button
-                  onClick={() => handleDeleteEvent(ev.id)}
-                  className="p-1.5 rounded-lg text-red-600 hover:bg-red-50 cursor-pointer"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => handleEditClick(ev)}
+                    className="p-1.5 rounded-lg text-gray-600 hover:bg-gray-100 cursor-pointer"
+                    title="Edit Event"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteEvent(ev.id, ev.title)}
+                    className="p-1.5 rounded-lg text-red-600 hover:bg-red-50 cursor-pointer"
+                    title="Delete Event"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               )}
             </div>
           ))}

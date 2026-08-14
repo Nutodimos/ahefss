@@ -5,7 +5,7 @@ import { AcademicSession, ExecutiveMember } from '@/lib/types';
 import { supabase } from '@/lib/supabase';
 import { getOptimizedImageUrl } from '@/lib/cloudinary';
 import CloudinaryUploadWidget from '@/components/CloudinaryUploadWidget';
-import { Lock, Plus, Trash2, Check, ShieldAlert } from 'lucide-react';
+import { Lock, Plus, Trash2, Check, ShieldAlert, Edit2, X, ArrowUp, ArrowDown } from 'lucide-react';
 
 interface AdminExecManagerProps {
   session: AcademicSession;
@@ -13,53 +13,107 @@ interface AdminExecManagerProps {
   onRefresh: () => void;
 }
 
+function formatWhatsAppUrl(input: string): string {
+  const trimmed = input.trim();
+  if (!trimmed) return 'https://wa.me/2348000000000';
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return trimmed;
+  }
+  let digits = trimmed.replace(/\D/g, '');
+  if (digits.startsWith('0')) {
+    digits = '234' + digits.substring(1);
+  } else if (!digits.startsWith('234')) {
+    digits = '234' + digits;
+  }
+  return `https://wa.me/${digits}`;
+}
+
 export default function AdminExecManager({
   session,
   executives,
   onRefresh,
 }: AdminExecManagerProps) {
+  const [editingExecId, setEditingExecId] = useState<string | null>(null);
   const [fullName, setFullName] = useState('');
   const [position, setPosition] = useState('');
   const [photoUrl, setPhotoUrl] = useState('/assets/logo.jpg');
   const [bioQuote, setBioQuote] = useState('');
   const [whatsappUrl, setWhatsappUrl] = useState('');
+  const [displayOrder, setDisplayOrder] = useState<number>(1);
   const [loading, setLoading] = useState(false);
 
   const isLocked = session.is_pioneer;
 
-  async function handleAddExec(e: React.FormEvent) {
+  function resetForm() {
+    setEditingExecId(null);
+    setFullName('');
+    setPosition('');
+    setPhotoUrl('/assets/logo.jpg');
+    setBioQuote('');
+    setWhatsappUrl('');
+    setDisplayOrder(executives.length + 1);
+  }
+
+  function handleEditClick(exec: ExecutiveMember) {
+    setEditingExecId(exec.id);
+    setFullName(exec.full_name);
+    setPosition(exec.office_position);
+    setPhotoUrl(exec.photo_url || '/assets/logo.jpg');
+    setBioQuote(exec.bio_quote || '');
+    setWhatsappUrl(exec.whatsapp_url || '');
+    setDisplayOrder(exec.display_order);
+  }
+
+  async function handleSaveExec(e: React.FormEvent) {
     e.preventDefault();
     if (isLocked) return;
 
     setLoading(true);
-    const newExec = {
-      id: crypto.randomUUID(),
+
+    const execPayload = {
       session_id: session.id,
       full_name: fullName.trim(),
       office_position: position.trim(),
-      display_order: executives.length + 1,
+      display_order: Number(displayOrder) || (executives.length + 1),
       photo_url: photoUrl,
       bio_quote: bioQuote.trim(),
-      whatsapp_url: whatsappUrl.trim() || `https://wa.me/2348000000000`,
+      whatsapp_url: formatWhatsAppUrl(whatsappUrl),
     };
 
     if (supabase) {
-      await supabase.from('executive_members').insert([newExec]);
+      if (editingExecId) {
+        await supabase.from('executive_members').update(execPayload).eq('id', editingExecId);
+      } else {
+        await supabase.from('executive_members').insert([{ id: crypto.randomUUID(), ...execPayload }]);
+      }
     }
 
-    setFullName('');
-    setPosition('');
-    setBioQuote('');
-    setWhatsappUrl('');
+    resetForm();
     setLoading(false);
     onRefresh();
   }
 
-  async function handleDeleteExec(id: string) {
+  async function handleDeleteExec(id: string, name: string) {
     if (isLocked) return;
+    if (!window.confirm(`Are you sure you want to delete ${name}?`)) return;
+
     if (supabase) {
       await supabase.from('executive_members').delete().eq('id', id);
     }
+    onRefresh();
+  }
+
+  async function handleReorder(exec: ExecutiveMember, direction: 'up' | 'down') {
+    if (isLocked || !supabase) return;
+    const currentIndex = executives.findIndex((e) => e.id === exec.id);
+    const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (targetIndex < 0 || targetIndex >= executives.length) return;
+
+    const otherExec = executives[targetIndex];
+    await Promise.all([
+      supabase.from('executive_members').update({ display_order: otherExec.display_order }).eq('id', exec.id),
+      supabase.from('executive_members').update({ display_order: exec.display_order }).eq('id', otherExec.id),
+    ]);
     onRefresh();
   }
 
@@ -76,15 +130,26 @@ export default function AdminExecManager({
         </div>
       )}
 
-      {/* Add New Executive Form */}
+      {/* Executive Member Form (Create / Edit) */}
       <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-4">
-        <h3 className="text-sm font-bold text-[#1A4D2E] uppercase tracking-wider flex items-center gap-2">
-          <Plus className="w-4 h-4 text-[#C9A227]" />
-          <span>Add Executive Member ({session.session_code})</span>
-        </h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-bold text-[#1A4D2E] uppercase tracking-wider flex items-center gap-2">
+            {editingExecId ? <Edit2 className="w-4 h-4 text-[#C9A227]" /> : <Plus className="w-4 h-4 text-[#C9A227]" />}
+            <span>{editingExecId ? 'Edit Executive Member' : `Add Executive Member (${session.session_code})`}</span>
+          </h3>
 
-        <form onSubmit={handleAddExec} className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {editingExecId && (
+            <button
+              onClick={resetForm}
+              className="text-xs font-bold text-gray-500 hover:text-gray-700 flex items-center gap-1 cursor-pointer"
+            >
+              <X className="w-4 h-4" /> Cancel Edit
+            </button>
+          )}
+        </div>
+
+        <form onSubmit={handleSaveExec} className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <input
               type="text"
               required
@@ -108,9 +173,18 @@ export default function AdminExecManager({
             <input
               type="text"
               disabled={isLocked}
-              placeholder="WhatsApp Link (e.g. https://wa.me/234...)"
+              placeholder="WhatsApp Number or Link (e.g. 08012345678)"
               value={whatsappUrl}
               onChange={(e) => setWhatsappUrl(e.target.value)}
+              className="px-3.5 py-2 border border-gray-300 rounded-xl text-xs disabled:bg-gray-100 disabled:opacity-60"
+            />
+
+            <input
+              type="number"
+              disabled={isLocked}
+              placeholder="Display Order (1, 2, 3...)"
+              value={displayOrder}
+              onChange={(e) => setDisplayOrder(Number(e.target.value))}
               className="px-3.5 py-2 border border-gray-300 rounded-xl text-xs disabled:bg-gray-100 disabled:opacity-60"
             />
           </div>
@@ -138,14 +212,23 @@ export default function AdminExecManager({
             </div>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-3">
+            {editingExecId && (
+              <button
+                type="button"
+                onClick={resetForm}
+                className="px-4 py-2.5 rounded-xl border border-gray-300 text-gray-700 text-xs font-bold hover:bg-gray-50 cursor-pointer"
+              >
+                Cancel
+              </button>
+            )}
             <button
               type="submit"
               disabled={isLocked || loading}
               className="px-5 py-2.5 rounded-xl bg-[#1A4D2E] text-white text-xs font-bold hover:bg-[#0F3320] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 cursor-pointer shadow-md"
             >
               {isLocked ? <Lock className="w-3.5 h-3.5" /> : <Check className="w-3.5 h-3.5" />}
-              <span>{isLocked ? 'Locked (Pioneer Session)' : 'Save Executive Member'}</span>
+              <span>{isLocked ? 'Locked (Pioneer Session)' : editingExecId ? 'Update Member' : 'Save Executive Member'}</span>
             </button>
           </div>
         </form>
@@ -158,9 +241,10 @@ export default function AdminExecManager({
         </h4>
 
         <div className="divide-y divide-gray-100">
-          {executives.map((exec) => (
+          {executives.map((exec, idx) => (
             <div key={exec.id} className="py-3 flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
+                <span className="text-xs font-bold text-gray-400 w-5">{exec.display_order}</span>
                 <img
                   src={getOptimizedImageUrl(exec.photo_url, { type: 'headshot', width: 100 })}
                   alt={exec.full_name}
@@ -173,13 +257,38 @@ export default function AdminExecManager({
               </div>
 
               {!isLocked && (
-                <button
-                  onClick={() => handleDeleteExec(exec.id)}
-                  className="p-1.5 rounded-lg text-red-600 hover:bg-red-50 cursor-pointer"
-                  title="Delete Member"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => handleReorder(exec, 'up')}
+                    disabled={idx === 0}
+                    className="p-1 rounded text-gray-500 hover:bg-gray-100 disabled:opacity-30 cursor-pointer"
+                    title="Move Up"
+                  >
+                    <ArrowUp className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleReorder(exec, 'down')}
+                    disabled={idx === executives.length - 1}
+                    className="p-1 rounded text-gray-500 hover:bg-gray-100 disabled:opacity-30 cursor-pointer"
+                    title="Move Down"
+                  >
+                    <ArrowDown className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleEditClick(exec)}
+                    className="p-1.5 rounded-lg text-gray-600 hover:bg-gray-100 cursor-pointer"
+                    title="Edit Member"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteExec(exec.id, exec.full_name)}
+                    className="p-1.5 rounded-lg text-red-600 hover:bg-red-50 cursor-pointer"
+                    title="Delete Member"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               )}
             </div>
           ))}

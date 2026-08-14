@@ -104,7 +104,7 @@ export default function Footer({ founder }: FooterProps) {
               rel="noopener noreferrer"
               className="text-[#C9A227] hover:underline font-semibold flex items-center gap-1 text-xs"
             >
-              <span>Developed with excellence for Nutodimos</span>
+              <span>Developed with excellence by Nutodimos</span>
               <ExternalLink className="w-3 h-3" />
             </a>
           </div>

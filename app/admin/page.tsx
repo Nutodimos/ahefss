@@ -18,6 +18,7 @@ import {
   MOCK_PROJECTS,
   MOCK_LECTURERS,
 } from '@/lib/supabase';
+import { signOutUser } from '@/lib/auth';
 
 import AdminSessionWizard from './components/AdminSessionWizard';
 import AdminExecManager from './components/AdminExecManager';
@@ -25,6 +26,7 @@ import AdminEventsManager from './components/AdminEventsManager';
 import AdminProjectsManager from './components/AdminProjectsManager';
 import AdminLecturersManager from './components/AdminLecturersManager';
 import AdminFounderManager from './components/AdminFounderManager';
+import ChangePasswordModal from './components/ChangePasswordModal';
 
 import {
   ShieldCheck,
@@ -37,6 +39,7 @@ import {
   Sparkles,
   ArrowLeft,
   LogOut,
+  KeyRound,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -52,6 +55,7 @@ export default function AdminDashboardPage() {
 
   const [activeTab, setActiveTab] = useState<'execs' | 'events' | 'projects' | 'lecturers' | 'founder'>('execs');
   const [showSessionWizard, setShowSessionWizard] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   // Fetch initial sessions & founder
@@ -121,6 +125,11 @@ export default function AdminDashboardPage() {
     setRefreshTrigger((prev) => prev + 1);
   }
 
+  async function handleLogout() {
+    await signOutUser();
+    window.location.href = '/admin/login';
+  }
+
   return (
     <div className="min-h-screen bg-[#FDFDF8] text-[#1A1A1A] flex flex-col">
       
@@ -180,13 +189,23 @@ export default function AdminDashboardPage() {
                 <span className="hidden sm:inline">New Session Wizard</span>
               </button>
 
-              <Link
-                href="/admin/login"
-                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors"
+              {/* Change Password Button */}
+              <button
+                onClick={() => setShowPasswordModal(true)}
+                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+                title="Change Password"
+              >
+                <KeyRound className="w-4 h-4" />
+              </button>
+
+              {/* Real Logout Button */}
+              <button
+                onClick={handleLogout}
+                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
                 title="Logout"
               >
                 <LogOut className="w-4 h-4" />
-              </Link>
+              </button>
             </div>
 
           </div>
@@ -342,6 +361,13 @@ export default function AdminDashboardPage() {
         <AdminSessionWizard
           onSessionCreated={handleSessionCreated}
           onClose={() => setShowSessionWizard(false)}
+        />
+      )}
+
+      {/* Change Password Modal */}
+      {showPasswordModal && (
+        <ChangePasswordModal
+          onClose={() => setShowPasswordModal(false)}
         />
       )}
 

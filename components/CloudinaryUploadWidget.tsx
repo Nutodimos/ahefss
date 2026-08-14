@@ -1,27 +1,30 @@
 'use client';
 
 import React, { useState } from 'react';
-import { UploadCloud, Image as ImageIcon, Loader2, CheckCircle2, Upload, X } from 'lucide-react';
+import { UploadCloud, Image as ImageIcon, Loader2, CheckCircle2, Upload, X, Plus } from 'lucide-react';
 
 interface CloudinaryUploadWidgetProps {
-  value: string;
-  onChange: (url: string) => void;
+  value?: string;
+  onChange?: (url: string) => void;
   label?: string;
   multiple?: boolean;
+  gallery?: string[];
+  onGalleryChange?: (urls: string[]) => void;
   onMultipleChange?: (urls: string[]) => void;
 }
 
 export default function CloudinaryUploadWidget({
-  value,
+  value = '',
   onChange,
   label = 'Upload Image',
   multiple = false,
+  gallery = [],
+  onGalleryChange,
   onMultipleChange,
 }: CloudinaryUploadWidgetProps) {
   const [uploading, setUploading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string>(value);
+  const [manualUrl, setManualUrl] = useState('');
 
-  // Cloudinary Cloud Name & Unsigned Preset
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'demo';
   const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'unsigned_preset';
 
@@ -62,10 +65,13 @@ export default function CloudinaryUploadWidget({
         }
       }
 
-      if (multiple && onMultipleChange) {
-        onMultipleChange(uploadedUrls);
-      } else if (uploadedUrls.length > 0) {
-        setPreviewUrl(uploadedUrls[0]);
+      if (multiple) {
+        if (onGalleryChange) {
+          onGalleryChange([...gallery, ...uploadedUrls]);
+        } else if (onMultipleChange) {
+          onMultipleChange(uploadedUrls);
+        }
+      } else if (uploadedUrls.length > 0 && onChange) {
         onChange(uploadedUrls[0]);
       }
     } catch (err) {
@@ -75,20 +81,57 @@ export default function CloudinaryUploadWidget({
     }
   }
 
+  function handleRemoveFromGallery(indexToRemove: number) {
+    if (onGalleryChange) {
+      onGalleryChange(gallery.filter((_, idx) => idx !== indexToRemove));
+    }
+  }
+
+  function handleAddManualUrl() {
+    if (!manualUrl.trim()) return;
+    if (multiple) {
+      if (onGalleryChange) {
+        onGalleryChange([...gallery, manualUrl.trim()]);
+      }
+      setManualUrl('');
+    } else {
+      if (onChange) onChange(manualUrl.trim());
+      setManualUrl('');
+    }
+  }
+
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {label && (
         <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider">
           {label}
         </label>
       )}
 
+      {/* Multiple Gallery Image Thumbnails Display */}
+      {multiple && gallery && gallery.length > 0 && (
+        <div className="flex flex-wrap gap-2.5 p-3 bg-gray-50 border border-gray-200 rounded-2xl">
+          {gallery.map((url, idx) => (
+            <div key={idx} className="relative group w-16 h-16 rounded-xl overflow-hidden border border-gray-300 bg-white shadow-sm">
+              <img src={url} alt={`Gallery thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+              <button
+                type="button"
+                onClick={() => handleRemoveFromGallery(idx)}
+                className="absolute top-1 right-1 p-1 rounded-full bg-red-600 text-white opacity-90 group-hover:opacity-100 hover:scale-110 transition-all cursor-pointer shadow"
+                title="Remove photo"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="flex items-center gap-3">
-        
-        {/* Preview Thumbnail */}
-        {previewUrl && !multiple && (
+        {/* Single Preview Thumbnail */}
+        {!multiple && value && (
           <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-gray-300 flex-shrink-0 bg-gray-50">
-            <img src={previewUrl} alt="Upload preview" className="w-full h-full object-cover" />
+            <img src={value} alt="Upload preview" className="w-full h-full object-cover" />
           </div>
         )}
 
@@ -103,7 +146,7 @@ export default function CloudinaryUploadWidget({
             ) : (
               <>
                 <Upload className="w-4 h-4 text-[#C9A227]" />
-                <span>{multiple ? 'Choose Gallery Photos (Multiple)' : 'Choose Image File'}</span>
+                <span>{multiple ? 'Select Gallery Photos (Multiple Supported)' : 'Choose Image File'}</span>
               </>
             )}
             <input
@@ -115,21 +158,32 @@ export default function CloudinaryUploadWidget({
             />
           </div>
         </label>
-
       </div>
 
       {/* Manual URL Input Fallback */}
-      <div className="pt-1">
+      <div className="flex gap-2">
         <input
           type="text"
-          value={value}
+          value={multiple ? manualUrl : value}
           onChange={(e) => {
-            setPreviewUrl(e.target.value);
-            onChange(e.target.value);
+            if (multiple) {
+              setManualUrl(e.target.value);
+            } else if (onChange) {
+              onChange(e.target.value);
+            }
           }}
-          placeholder="Or paste Cloudinary image URL..."
-          className="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-[11px] text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#1A4D2E]"
+          placeholder={multiple ? "Paste image URL and click Add..." : "Or paste Cloudinary image URL..."}
+          className="flex-1 px-3 py-1.5 border border-gray-200 rounded-lg text-[11px] text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#1A4D2E]"
         />
+        {multiple && manualUrl.trim() && (
+          <button
+            type="button"
+            onClick={handleAddManualUrl}
+            className="px-3 py-1.5 rounded-lg bg-[#1A4D2E] text-white text-xs font-bold hover:bg-[#0F3320] flex items-center gap-1 cursor-pointer"
+          >
+            <Plus className="w-3.5 h-3.5" /> Add
+          </button>
+        )}
       </div>
     </div>
   );

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { ShieldCheck, Lock, Mail, ArrowRight } from 'lucide-react';
+import { Mail, Lock, ArrowRight, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminLoginPage() {
@@ -18,29 +18,29 @@ export default function AdminLoginPage() {
     setLoading(true);
     setErrorMsg(null);
 
-    if (supabase) {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        setErrorMsg(error.message);
-        setLoading(false);
-        return;
-      }
+    if (!supabase) {
+      setErrorMsg('Database client connection is not configured.');
+      setLoading(false);
+      return;
     }
 
-    // Redirect to admin dashboard
-    router.push('/admin');
-  }
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
 
-  function handleDemoAccess() {
-    router.push('/admin');
+    if (error) {
+      setErrorMsg(error.message);
+      setLoading(false);
+      return;
+    }
+
+    // Redirect securely to admin dashboard
+    window.location.href = '/admin';
   }
 
   return (
-    <div className="min-h-screen bg-watermark flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#FDFDF8] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <Link href="/" className="inline-block">
           <div className="w-16 h-16 rounded-full p-1 bg-gradient-to-tr from-[#C9A227] via-[#1A4D2E] to-[#C9A227] mx-auto shadow-lg mb-3">
@@ -61,7 +61,7 @@ export default function AdminLoginPage() {
           <form className="space-y-6" onSubmit={handleLogin}>
             
             {errorMsg && (
-              <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold">
+              <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold">
                 {errorMsg}
               </div>
             )}
@@ -108,7 +108,7 @@ export default function AdminLoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex justify-center items-center gap-2 py-3 px-4 rounded-xl shadow-md text-sm font-bold text-white bg-[#1A4D2E] hover:bg-[#0F3320] transition-colors focus:outline-none cursor-pointer"
+                className="w-full flex justify-center items-center gap-2 py-3 px-4 rounded-xl shadow-md text-sm font-bold text-white bg-[#1A4D2E] hover:bg-[#0F3320] transition-colors focus:outline-none cursor-pointer disabled:opacity-50"
               >
                 {loading ? 'Authenticating...' : 'Sign In to Dashboard'}
                 <ArrowRight className="w-4 h-4" />
@@ -116,15 +116,6 @@ export default function AdminLoginPage() {
             </div>
 
           </form>
-
-          <div className="mt-6 pt-6 border-t border-gray-100 text-center">
-            <button
-              onClick={handleDemoAccess}
-              className="text-xs font-bold text-[#1A4D2E] hover:text-[#0F3320] underline underline-offset-4 cursor-pointer"
-            >
-              Enter Preview / Demo Admin Session
-            </button>
-          </div>
 
         </div>
       </div>
