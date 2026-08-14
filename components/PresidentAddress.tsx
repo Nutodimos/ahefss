@@ -58,19 +58,19 @@ export default function PresidentAddress({
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
             
             {/* Circular President Image with Gold Ring */}
-            <div className="flex-shrink-0 text-center">
-              <div className="relative w-36 h-36 sm:w-44 sm:h-44 rounded-full p-1 bg-gradient-to-tr from-[#C9A227] via-[#1A4D2E] to-[#C9A227] shadow-lg">
+            <div className="flex-shrink-0 text-center w-full md:w-60 flex flex-col items-center">
+              <div className="relative w-36 h-36 sm:w-44 sm:h-44 rounded-full p-1 bg-gradient-to-tr from-[#C9A227] via-[#1A4D2E] to-[#C9A227] shadow-lg mx-auto">
                 <img
                   src={photoUrl}
                   alt={presidentName}
                   className="w-full h-full object-cover object-top rounded-full ring-2 ring-white"
                 />
               </div>
-              <div className="mt-4">
-                <h3 className="font-ceremonial text-2xl font-bold text-[#1A4D2E]">
+              <div className="mt-4 text-center">
+                <h3 className="font-ceremonial text-xl sm:text-2xl font-bold text-[#1A4D2E]">
                   {presidentName}
                 </h3>
-                <p className="text-xs font-semibold text-[#C9A227] uppercase tracking-wider">
+                <p className="text-xs font-semibold text-[#C9A227] uppercase tracking-wider mt-1">
                   President ({session.theme_title})
                 </p>
                 <p className="text-xs text-gray-500 font-medium">AHEFSS Administration</p>

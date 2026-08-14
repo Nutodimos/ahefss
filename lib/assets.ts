@@ -32,14 +32,16 @@ export const PRESIDENT_SPEECH_PHOTO_URL = 'https://res.cloudinary.com/q9jb9wvk/i
 
 // ── Executive Headshots ────────────────────────────────────────────────────────
 export const EXEC_PHOTOS: Record<string, string | null> = {
-  president:          'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786720144/fkoeef89qbzvnpkp5fd3.jpg',
-  vicePresident:      'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786720146/rrtd4roqdmrsmihc1efj.jpg',
-  generalSecretary:   null, // Photo pending
-  financialSecretary: null, // Photo pending
-  treasurer:          null, // Photo pending
-  pro:                null, // Photo pending
-  socialDirector:     null, // Photo pending
-  sportsDirector:     null, // Photo pending
+  president:                 'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786720144/fkoeef89qbzvnpkp5fd3.jpg',
+  vicePresident:             'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786720146/rrtd4roqdmrsmihc1efj.jpg',
+  generalSecretary:          null, // Photo pending
+  assistantGeneralSecretary: null, // Photo pending
+  directorOfFinance:         null, // Photo pending
+  welfareSecretary:          null, // Photo pending
+  pro:                       null, // Photo pending
+  sportSecretary:            null, // Photo pending
+  socialSecretary:           null, // Photo pending
+  librarian:                 null, // Photo pending
 };
 
 // ── Executives Flyer (also used as "Meet The Executives" event card) ──────────

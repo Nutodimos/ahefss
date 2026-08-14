@@ -158,7 +158,7 @@ export default function Navbar({
 
                           {session.is_pioneer ? (
                             <span className="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-medium border border-amber-200">
-                              Pioneer
+                              Elevation Era
                             </span>
                           ) : isCurrentSelected ? (
                             <CheckCircle2 className="w-4 h-4 text-[#1A4D2E]" />

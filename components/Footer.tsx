@@ -66,7 +66,7 @@ export default function Footer({ founder }: FooterProps) {
                   Elevation Era · Founded by {founder.full_name}
                 </h4>
                 <p className="text-xs text-gray-300">
-                  Commissioning Pioneer Administration
+                  Commissioning Elevation Administration
                 </p>
               </div>
             </div>
@@ -139,7 +139,7 @@ export default function Footer({ founder }: FooterProps) {
                   {founder.full_name}
                 </h3>
                 <p className="text-xs text-gray-500 font-medium">
-                  Pioneer President, The Elevation Era
+                  President, The Elevation Era
                 </p>
               </div>
             </div>
