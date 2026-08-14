@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion, Variants } from 'framer-motion';
 import { EventItem } from '@/lib/types';
 import { getOptimizedImageUrl } from '@/lib/cloudinary';
 import LightboxModal from './LightboxModal';
@@ -11,6 +12,18 @@ interface OurEventsProps {
   themeTitle: string;
 }
 
+const containerVariants: Variants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.15 },
+  },
+};
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 30, scale: 0.96 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: [0, 0, 0.2, 1] } },
+};
+
 export default function OurEvents({ events, themeTitle }: OurEventsProps) {
   const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
 
@@ -19,7 +32,13 @@ export default function OurEvents({ events, themeTitle }: OurEventsProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center mb-14">
+        <motion.div
+          className="text-center mb-14"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A4D2E]/10 border border-[#C9A227]/40 text-[#1A4D2E] text-xs font-semibold uppercase tracking-wider mb-3">
             <Sparkles className="w-3.5 h-3.5 text-[#C9A227]" />
             <span>Association Activities</span>
@@ -31,29 +50,41 @@ export default function OurEvents({ events, themeTitle }: OurEventsProps) {
             Key programs, workshops, and exhibitions hosted during {themeTitle}. Click any card to open the interactive photo gallery.
           </p>
           <div className="w-24 h-1 bg-[#C9A227] mx-auto mt-4 rounded-full"></div>
-        </div>
+        </motion.div>
 
         {events.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-3xl border border-gray-200">
+          <motion.div
+            className="text-center py-12 bg-white rounded-3xl border border-gray-200"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
             <p className="text-gray-500 font-medium">No events recorded for this session yet.</p>
-          </div>
+          </motion.div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 gap-8"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+          >
             {events.map((event) => {
               const galleryCount = event.photo_gallery?.length || 0;
 
               return (
-                <div
+                <motion.div
                   key={event.id}
+                  variants={cardVariants}
+                  whileHover={{ y: -8, boxShadow: '0 25px 50px -12px rgba(26, 77, 46, 0.25)' }}
                   onClick={() => setSelectedEvent(event)}
-                  className="group bg-white rounded-3xl overflow-hidden border border-gray-100 hover:border-[#C9A227] shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col cursor-pointer"
+                  className="group bg-white rounded-3xl overflow-hidden border border-gray-100 hover:border-[#C9A227] shadow-md transition-all duration-300 flex flex-col cursor-pointer"
                 >
                   {/* Flyer Banner Header */}
                   <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-gray-900">
                     <img
                       src={getOptimizedImageUrl(event.flyer_banner_url, { type: 'banner', width: 1200 })}
                       alt={event.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
+                      className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 opacity-90"
                     />
                     
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20"></div>
@@ -102,10 +133,10 @@ export default function OurEvents({ events, themeTitle }: OurEventsProps) {
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         )}
 
       </div>
