@@ -12,18 +12,18 @@ const require = createRequire(import.meta.url);
 const sharp = require('sharp');
 
 // ─── Config ───────────────────────────────────────────────────────────────────
-const CLOUD_NAME   = 'q9jb9wvk';
+const CLOUD_NAME = 'q9jb9wvk';
 const UPLOAD_PRESET = 'ahefss_uploads';
-const API_URL       = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+const API_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
 
 const ASSETS_ROOT = path.resolve('public/assets');
-const TEMP_DIR    = path.resolve('scratch/compressed_temp');
+const TEMP_DIR = path.resolve('scratch/compressed_temp');
 
 // Compression settings per asset type
 const COMPRESS_OPTS = {
-  jpg:  { quality: 80 },   // JPEG: 80% quality
+  jpg: { quality: 80 },   // JPEG: 80% quality
   jpeg: { quality: 80 },
-  png:  { compressionLevel: 8, quality: 85 }, // PNG → WebP isn't used; keep PNG but compress
+  png: { compressionLevel: 8, quality: 85 }, // PNG → WebP isn't used; keep PNG but compress
 };
 
 // ─── Asset Map ────────────────────────────────────────────────────────────────
@@ -31,31 +31,31 @@ const COMPRESS_OPTS = {
 // key = manifest path, value = local file path (relative to ASSETS_ROOT)
 const ASSET_MAP = {
   // ── Brand ──
-  'brand.logo':                   'Logo.jpg',
-  'brand.administrationLogo':     'Administration logo.jpg',
+  'brand.logo': 'Logo.jpg',
+  'brand.administrationLogo': 'Administration logo.jpg',
 
   // ── President Section ──
-  'president.speechPhoto':        'President speech Picture .jpg',
+  'president.speechPhoto': 'President speech Picture .jpg',
 
   // ── Executives ──
-  'executives.president':         'Meet your executives_/President Abdulwarees_.jpg',
-  'executives.vicePresident':     'Meet your executives_/Vice president.jpg',
-  'executives.flyer':             'Meet your executives_/meet your executive flyer.jpg',
+  'executives.president': 'Meet your executives_/President Abdulwarees_.jpg',
+  'executives.vicePresident': 'Meet your executives_/Vice president.jpg',
+  'executives.flyer': 'Meet your executives_/meet your executive flyer.jpg',
 
   // ── Events: HOD's Cup ──
-  'events.hodsCup.gallery[0]':    'events/AHEFSS HOD_s Cup/IMG-20260106-WA0020.jpg',
-  'events.hodsCup.gallery[1]':    'events/AHEFSS HOD_s Cup/IMG-20260109-WA0006.jpg',
-  'events.hodsCup.gallery[2]':    'events/AHEFSS HOD_s Cup/IMG-20260113-WA0027.jpg',
-  'events.hodsCup.gallery[3]':    'events/AHEFSS HOD_s Cup/IMG-20260124-WA0067.jpg',
-  'events.hodsCup.gallery[4]':    'events/AHEFSS HOD_s Cup/IMG-20260814-WA0003(1).jpg',
-  'events.hodsCup.gallery[5]':    'events/AHEFSS HOD_s Cup/IMG-20260814-WA0004.jpg',
-  'events.hodsCup.gallery[6]':    'events/AHEFSS HOD_s Cup/IMG-20260814-WA0005.jpg',
-  'events.hodsCup.gallery[7]':    'events/AHEFSS HOD_s Cup/Screenshot_20260814-105034.jpg',
+  'events.hodsCup.gallery[0]': 'events/AHEFSS HOD_s Cup/IMG-20260106-WA0020.jpg',
+  'events.hodsCup.gallery[1]': 'events/AHEFSS HOD_s Cup/IMG-20260109-WA0006.jpg',
+  'events.hodsCup.gallery[2]': 'events/AHEFSS HOD_s Cup/IMG-20260113-WA0027.jpg',
+  'events.hodsCup.gallery[3]': 'events/AHEFSS HOD_s Cup/IMG-20260124-WA0067.jpg',
+  'events.hodsCup.gallery[4]': 'events/AHEFSS HOD_s Cup/IMG-20260814-WA0003(1).jpg',
+  'events.hodsCup.gallery[5]': 'events/AHEFSS HOD_s Cup/IMG-20260814-WA0004.jpg',
+  'events.hodsCup.gallery[6]': 'events/AHEFSS HOD_s Cup/IMG-20260814-WA0005.jpg',
+  'events.hodsCup.gallery[7]': 'events/AHEFSS HOD_s Cup/Screenshot_20260814-105034.jpg',
 
   // ── Events: Departmental Cleanup ──
-  'events.cleanup.gallery[0]':    'events/Departmental Cleanup_/IMG-20251228-WA0034.jpg',
-  'events.cleanup.gallery[1]':    'events/Departmental Cleanup_/IMG-20260414-WA0052(1).jpg',
-  'events.cleanup.gallery[2]':    'events/Departmental Cleanup_/IMG-20260806-WA0003.jpg',
+  'events.cleanup.gallery[0]': 'events/Departmental Cleanup_/IMG-20251228-WA0034.jpg',
+  'events.cleanup.gallery[1]': 'events/Departmental Cleanup_/IMG-20260414-WA0052(1).jpg',
+  'events.cleanup.gallery[2]': 'events/Departmental Cleanup_/IMG-20260806-WA0003.jpg',
 
   // ── Events: HIV Testing ──
   'events.hivTesting.gallery[0]': 'events/Free HIV Testing Outreach/IMG-20251127-WA0025.jpg',
@@ -74,16 +74,16 @@ const ASSET_MAP = {
   'events.fresherOrientation.gallery[5]': 'events/Fresher Orientation_/IMG-20251127-WA0052.jpg',
 
   // ── Events: Merchandise Launch ──
-  'events.merchandise.gallery[0]':  'events/Merchandise_/IMG-20260314-WA0034.jpg',
-  'events.merchandise.gallery[1]':  'events/Merchandise_/IMG-20260401-WA0035.jpg',
-  'events.merchandise.gallery[2]':  'events/Merchandise_/IMG_0321 (2).jpg',
-  'events.merchandise.gallery[3]':  'events/Merchandise_/IMG_0404 (1).jpg',
-  'events.merchandise.gallery[4]':  'events/Merchandise_/IMG_0405.jpg',
-  'events.merchandise.gallery[5]':  'events/Merchandise_/IMG_20260522_135530_693.jpg',
-  'events.merchandise.gallery[6]':  'events/Merchandise_/IMG_20260522_135627_139.jpg',
-  'events.merchandise.gallery[7]':  'events/Merchandise_/bottle 2.png',
-  'events.merchandise.gallery[8]':  'events/Merchandise_/bottle.png',
-  'events.merchandise.gallery[9]':  'events/Merchandise_/cap black.png',
+  'events.merchandise.gallery[0]': 'events/Merchandise_/IMG-20260314-WA0034.jpg',
+  'events.merchandise.gallery[1]': 'events/Merchandise_/IMG-20260401-WA0035.jpg',
+  'events.merchandise.gallery[2]': 'events/Merchandise_/IMG_0321 (2).jpg',
+  'events.merchandise.gallery[3]': 'events/Merchandise_/IMG_0404 (1).jpg',
+  'events.merchandise.gallery[4]': 'events/Merchandise_/IMG_0405.jpg',
+  'events.merchandise.gallery[5]': 'events/Merchandise_/IMG_20260522_135530_693.jpg',
+  'events.merchandise.gallery[6]': 'events/Merchandise_/IMG_20260522_135627_139.jpg',
+  'events.merchandise.gallery[7]': 'events/Merchandise_/bottle 2.png',
+  'events.merchandise.gallery[8]': 'events/Merchandise_/bottle.png',
+  'events.merchandise.gallery[9]': 'events/Merchandise_/cap black.png',
   'events.merchandise.gallery[10]': 'events/Merchandise_/cap white.png',
   'events.merchandise.gallery[11]': 'events/Merchandise_/mug.png',
   'events.merchandise.gallery[12]': 'events/Merchandise_/pen.png',
@@ -93,16 +93,16 @@ const ASSET_MAP = {
   'events.merchandise.gallery[16]': 'events/Merchandise_/shirt white.png',
 
   // ── Events: Skill Acquisition ──
-  'events.skillAcquisition.gallery[0]':  'events/Skill acquisition_/IMG-20260712-WA0067.jpg',
-  'events.skillAcquisition.gallery[1]':  'events/Skill acquisition_/IMG_0345.jpg',
-  'events.skillAcquisition.gallery[2]':  'events/Skill acquisition_/IMG_0354 (1).jpg',
-  'events.skillAcquisition.gallery[3]':  'events/Skill acquisition_/IMG_0356 (1).jpg',
-  'events.skillAcquisition.gallery[4]':  'events/Skill acquisition_/IMG_0363.jpg',
-  'events.skillAcquisition.gallery[5]':  'events/Skill acquisition_/IMG_0364 (1).jpg',
-  'events.skillAcquisition.gallery[6]':  'events/Skill acquisition_/IMG_0375 (1).jpg',
-  'events.skillAcquisition.gallery[7]':  'events/Skill acquisition_/IMG_0380 (1).jpg',
-  'events.skillAcquisition.gallery[8]':  'events/Skill acquisition_/IMG_0386 (1).jpg',
-  'events.skillAcquisition.gallery[9]':  'events/Skill acquisition_/IMG_0388 (2).jpg',
+  'events.skillAcquisition.gallery[0]': 'events/Skill acquisition_/IMG-20260712-WA0067.jpg',
+  'events.skillAcquisition.gallery[1]': 'events/Skill acquisition_/IMG_0345.jpg',
+  'events.skillAcquisition.gallery[2]': 'events/Skill acquisition_/IMG_0354 (1).jpg',
+  'events.skillAcquisition.gallery[3]': 'events/Skill acquisition_/IMG_0356 (1).jpg',
+  'events.skillAcquisition.gallery[4]': 'events/Skill acquisition_/IMG_0363.jpg',
+  'events.skillAcquisition.gallery[5]': 'events/Skill acquisition_/IMG_0364 (1).jpg',
+  'events.skillAcquisition.gallery[6]': 'events/Skill acquisition_/IMG_0375 (1).jpg',
+  'events.skillAcquisition.gallery[7]': 'events/Skill acquisition_/IMG_0380 (1).jpg',
+  'events.skillAcquisition.gallery[8]': 'events/Skill acquisition_/IMG_0386 (1).jpg',
+  'events.skillAcquisition.gallery[9]': 'events/Skill acquisition_/IMG_0388 (2).jpg',
   'events.skillAcquisition.gallery[10]': 'events/Skill acquisition_/IMG_0396 (2).jpg',
   'events.skillAcquisition.gallery[11]': 'events/Skill acquisition_/IMG_0408.jpg',
   'events.skillAcquisition.gallery[12]': 'events/Skill acquisition_/IMG_0410.jpg',
@@ -135,16 +135,16 @@ const ASSET_MAP = {
 
   // ── Virtual Events: Orientation flyers (standalone) ──
   'events.virtual.orientationFlyer1': 'events/Virtual Events/Orientation Program.jpg',
-  'events.virtual.orientationFlyer2': 'events/Virtual Events/Orientation Programme For 200-500L Students.jpg',
+  'events.virtual.orientationFlyer2': 'events/Virtual Events/Orientation Programme For 100-500L Students.jpg',
 
   // ── Projects: Department Signage ──
-  'projects.deptSignage.cover':       'projects/Department sign post.jpg',
-  'projects.deptSignage.gallery[0]':  'projects/Department Signage/elevate-2-1.png',
-  'projects.deptSignage.gallery[1]':  'projects/Department Signage/elevate-2-2.png',
-  'projects.deptSignage.gallery[2]':  'projects/Department Signage/elevate-2-3.png',
-  'projects.deptSignage.gallery[3]':  'projects/Department Signage/elevate-2-4.png',
-  'projects.deptSignage.gallery[4]':  'projects/Department Signage/elevate-2-5.png',
-  'projects.deptSignage.gallery[5]':  'projects/Department Signage/elevate-2-6.png',
+  'projects.deptSignage.cover': 'projects/Department sign post.jpg',
+  'projects.deptSignage.gallery[0]': 'projects/Department Signage/elevate-2-1.png',
+  'projects.deptSignage.gallery[1]': 'projects/Department Signage/elevate-2-2.png',
+  'projects.deptSignage.gallery[2]': 'projects/Department Signage/elevate-2-3.png',
+  'projects.deptSignage.gallery[3]': 'projects/Department Signage/elevate-2-4.png',
+  'projects.deptSignage.gallery[4]': 'projects/Department Signage/elevate-2-5.png',
+  'projects.deptSignage.gallery[5]': 'projects/Department Signage/elevate-2-6.png',
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -206,7 +206,7 @@ async function main() {
       continue;
     }
 
-    const ext    = path.extname(relPath);
+    const ext = path.extname(relPath);
     const safeId = key.replace(/[\[\].]/g, '_').replace(/__+/g, '_');
     const destPath = path.join(TEMP_DIR, `${safeId}${ext}`);
 

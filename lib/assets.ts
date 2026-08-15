@@ -28,17 +28,18 @@ export const ADMIN_LOGO_URL = 'https://res.cloudinary.com/q9jb9wvk/image/upload/
 
 // ── President's Address Section ───────────────────────────────────────────────
 /** Full-shot speech photo for the President's Address hero section */
-export const PRESIDENT_SPEECH_PHOTO_URL = 'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786720143/vbpkjj4kbjqp8kefnijt.jpg';
+export const PRESIDENT_SPEECH_PHOTO_URL = 'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786814762/k3mjspji6w8ce99ei59p.jpg';
 
 // ── Executive Headshots ────────────────────────────────────────────────────────
 export const EXEC_PHOTOS: Record<string, string | null> = {
-  president:                 'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786720144/fkoeef89qbzvnpkp5fd3.jpg',
-  vicePresident:             'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786720146/rrtd4roqdmrsmihc1efj.jpg',
+  president:                 'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786814764/w6o7r1zhl7smu6w0cmj6.jpg',
+  vicePresident:             'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786814765/ijqntlfu1nmarpvwtnhs.jpg',
   generalSecretary:          null, // Photo pending
   assistantGeneralSecretary: null, // Photo pending
   directorOfFinance:         null, // Photo pending
   welfareSecretary:          null, // Photo pending
   pro:                       null, // Photo pending
+  pro2:                      'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786814766/ya5qxuvsqkfgi3df1qhf.jpg',
   sportSecretary:            null, // Photo pending
   socialSecretary:           null, // Photo pending
   librarian:                 null, // Photo pending
@@ -55,6 +56,7 @@ export const EVENT_MEET_EXECUTIVES = {
     EXECUTIVES_FLYER_URL,
     EXEC_PHOTOS.president!,
     EXEC_PHOTOS.vicePresident!,
+    EXEC_PHOTOS.pro2!,
   ],
 };
 
