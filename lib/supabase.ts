@@ -341,7 +341,7 @@ export const MOCK_LECTURERS: Record<string, Lecturer[]> = {
     {
       id: 'lec-1',
       session_id: '22222222-2222-2222-2222-222222222222',
-      full_name: 'Head of Department (HOD)',
+      full_name: 'Dr. Adeshola A. Babayeju',
       is_hod: true,
       photo_url: HOD_PHOTO_URL,
       display_order: 1,
@@ -349,7 +349,7 @@ export const MOCK_LECTURERS: Record<string, Lecturer[]> = {
     {
       id: 'lec-2',
       session_id: '22222222-2222-2222-2222-222222222222',
-      full_name: 'Prof. O. A. Adebayo',
+      full_name: 'Professor R. M. O. Kayode',
       is_hod: false,
       photo_url: null,
       display_order: 2,
@@ -357,7 +357,7 @@ export const MOCK_LECTURERS: Record<string, Lecturer[]> = {
     {
       id: 'lec-3',
       session_id: '22222222-2222-2222-2222-222222222222',
-      full_name: 'Dr. Mrs. C. F. Okonkwo',
+      full_name: 'Professor Mutiat A. Balogun',
       is_hod: false,
       photo_url: null,
       display_order: 3,
@@ -365,7 +365,7 @@ export const MOCK_LECTURERS: Record<string, Lecturer[]> = {
     {
       id: 'lec-4',
       session_id: '22222222-2222-2222-2222-222222222222',
-      full_name: 'Dr. K. E. Ibrahim',
+      full_name: 'Professor Fausat L. Kolawole',
       is_hod: false,
       photo_url: null,
       display_order: 4,
@@ -373,7 +373,7 @@ export const MOCK_LECTURERS: Record<string, Lecturer[]> = {
     {
       id: 'lec-5',
       session_id: '22222222-2222-2222-2222-222222222222',
-      full_name: 'Engr. T. O. Alabi',
+      full_name: 'Professor Oluwafunmilola A. Abiodun',
       is_hod: false,
       photo_url: null,
       display_order: 5,
@@ -381,7 +381,7 @@ export const MOCK_LECTURERS: Record<string, Lecturer[]> = {
     {
       id: 'lec-6',
       session_id: '22222222-2222-2222-2222-222222222222',
-      full_name: 'Mrs. A. M. Bello',
+      full_name: 'Dr. A. O. Dauda',
       is_hod: false,
       photo_url: null,
       display_order: 6,
@@ -389,10 +389,58 @@ export const MOCK_LECTURERS: Record<string, Lecturer[]> = {
     {
       id: 'lec-7',
       session_id: '22222222-2222-2222-2222-222222222222',
-      full_name: 'Mr. S. B. Oladipo',
+      full_name: 'Dr. Abimbola K. Arise',
       is_hod: false,
       photo_url: null,
       display_order: 7,
+    },
+    {
+      id: 'lec-8',
+      session_id: '22222222-2222-2222-2222-222222222222',
+      full_name: 'Dr. Christianah T. Gbadebo',
+      is_hod: false,
+      photo_url: null,
+      display_order: 8,
+    },
+    {
+      id: 'lec-9',
+      session_id: '22222222-2222-2222-2222-222222222222',
+      full_name: 'Dr. Deborah Opaleke',
+      is_hod: false,
+      photo_url: null,
+      display_order: 9,
+    },
+    {
+      id: 'lec-10',
+      session_id: '22222222-2222-2222-2222-222222222222',
+      full_name: 'Dr. Khadijat O. Salami',
+      is_hod: false,
+      photo_url: null,
+      display_order: 10,
+    },
+    {
+      id: 'lec-11',
+      session_id: '22222222-2222-2222-2222-222222222222',
+      full_name: 'Dr. Raji',
+      is_hod: false,
+      photo_url: null,
+      display_order: 11,
+    },
+    {
+      id: 'lec-12',
+      session_id: '22222222-2222-2222-2222-222222222222',
+      full_name: 'Mrs. Abdulquadri',
+      is_hod: false,
+      photo_url: null,
+      display_order: 12,
+    },
+    {
+      id: 'lec-13',
+      session_id: '22222222-2222-2222-2222-222222222222',
+      full_name: 'Mr. Kareem',
+      is_hod: false,
+      photo_url: null,
+      display_order: 13,
     },
   ]
 };
