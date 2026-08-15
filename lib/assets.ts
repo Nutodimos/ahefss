@@ -45,7 +45,7 @@ export const EXEC_PHOTOS: Record<string, string | null> = {
   pro2:                      'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786814766/ya5qxuvsqkfgi3df1qhf.jpg',
   sportSecretary:            'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786832417/j88kb6ar9u8ancacom2j.jpg',
   socialSecretary:           'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786832416/ozagid1sh2zazrh0s3ke.jpg',
-  librarian:                 null, // Photo pending
+  librarian:                 'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786833390/lfqv27kwdo17nqvssplw.jpg',
 };
 
 // ── Executives Flyer (also used as "Meet The Executives" event card) ──────────
@@ -66,6 +66,7 @@ export const EVENT_MEET_EXECUTIVES = {
     EXEC_PHOTOS.pro2!,
     EXEC_PHOTOS.sportSecretary!,
     EXEC_PHOTOS.socialSecretary!,
+    EXEC_PHOTOS.librarian!,
   ],
 };
 
