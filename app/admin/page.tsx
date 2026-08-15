@@ -7,11 +7,9 @@ import {
   EventItem,
   ProjectItem,
   Lecturer,
-  Founder,
 } from '@/lib/types';
 import {
   supabase,
-  MOCK_FOUNDER,
   MOCK_SESSIONS,
   MOCK_EXECUTIVE_MEMBERS,
   MOCK_EVENTS,
@@ -25,7 +23,6 @@ import AdminExecManager from './components/AdminExecManager';
 import AdminEventsManager from './components/AdminEventsManager';
 import AdminProjectsManager from './components/AdminProjectsManager';
 import AdminLecturersManager from './components/AdminLecturersManager';
-import AdminFounderManager from './components/AdminFounderManager';
 import ChangePasswordModal from './components/ChangePasswordModal';
 
 import {
@@ -36,7 +33,6 @@ import {
   Calendar,
   FolderGit2,
   GraduationCap,
-  Sparkles,
   ArrowLeft,
   LogOut,
   KeyRound,
@@ -51,21 +47,17 @@ export default function AdminDashboardPage() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [lecturers, setLecturers] = useState<Lecturer[]>([]);
-  const [founder, setFounder] = useState<Founder>(MOCK_FOUNDER);
 
-  const [activeTab, setActiveTab] = useState<'execs' | 'events' | 'projects' | 'lecturers' | 'founder'>('execs');
+  const [activeTab, setActiveTab] = useState<'execs' | 'events' | 'projects' | 'lecturers'>('execs');
   const [showSessionWizard, setShowSessionWizard] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  // Fetch initial sessions & founder
+  // Fetch initial sessions
   useEffect(() => {
     async function loadAdminData() {
       if (supabase) {
         try {
-          const { data: founderData } = await supabase.from('founder').select('*').limit(1).single();
-          if (founderData) setFounder(founderData);
-
           const { data: sessionData } = await supabase
             .from('academic_sessions')
             .select('*')
@@ -323,18 +315,6 @@ export default function AdminDashboardPage() {
             <GraduationCap className="w-4 h-4 text-[#C9A227]" />
             <span>Lecturers & HOD</span>
           </button>
-
-          <button
-            onClick={() => setActiveTab('founder')}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
-              activeTab === 'founder'
-                ? 'bg-[#1A4D2E] text-white shadow-md'
-                : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
-            }`}
-          >
-            <Sparkles className="w-4 h-4 text-[#C9A227]" />
-            <span>Global Founder Credit</span>
-          </button>
         </div>
 
         {/* Tab Content Panels */}
@@ -367,13 +347,6 @@ export default function AdminDashboardPage() {
             <AdminLecturersManager
               session={selectedSession}
               lecturers={lecturers}
-              onRefresh={() => setRefreshTrigger((prev) => prev + 1)}
-            />
-          )}
-
-          {activeTab === 'founder' && (
-            <AdminFounderManager
-              founder={founder}
               onRefresh={() => setRefreshTrigger((prev) => prev + 1)}
             />
           )}
