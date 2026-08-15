@@ -171,9 +171,13 @@ export const EVENT_VIRTUAL_ANCHOR = {
 };
 
 export const EVENT_VIRTUAL_WEYESDAY = {
-  // Photo file not found locally — upload pending (add to events/Virtual Events/AHEFSS Weyesday/)
-  flyer:   null as string | null,
-  gallery: [] as string[],
+  flyer: 'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786833971/pfnuxp9dkrmofgdzkjid.jpg',
+  gallery: [
+    'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786833971/pfnuxp9dkrmofgdzkjid.jpg',
+    'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786833972/xkueuwgri6abuqbnsyte.jpg',
+    'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786833973/jehnxrzcvuf45jwtujso.jpg',
+    'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786833974/ejcrczksngxz6wmojpz4.jpg',
+  ],
 };
 
 export const EVENT_VIRTUAL_FINANCE_ELEVATION = {
@@ -185,21 +189,23 @@ export const EVENT_VIRTUAL_FINANCE_ELEVATION = {
 };
 
 export const EVENT_VIRTUAL_MENTAL_HEALTH_WEBINAR = {
-  // Photos not found locally — upload pending (add to events/Virtual Events/Mental Health Webinar_/)
-  flyer:   null as string | null,
-  gallery: [] as string[],
+  flyer: 'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786833975/yrvosjfllrcdzh4vr7o0.jpg',
+  gallery: [
+    'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786833975/yrvosjfllrcdzh4vr7o0.jpg',
+  ],
 };
 
 export const EVENT_VIRTUAL_MENTAL_HEALTH_AWARENESS = {
-  flyer: 'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786720620/ykw6jkvpughpdxv3snwy.jpg',
+  flyer: 'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786833976/rfzc7ij658zaamp1nexi.jpg',
   gallery: [
-    'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786720620/ykw6jkvpughpdxv3snwy.jpg',
-    'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786720625/hz0aepcz2hslyrtp0ra1.jpg',
-    'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786720630/i8aktz321t74kbinkcoz.jpg',
-    'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786720636/wy0tcqq184onj4du148z.jpg',
-    'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786720642/pwqzl2o587fd5941uat1.jpg',
-    'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786720648/tpl76c1zqp98w5we8idg.jpg',
-    'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786720654/bwref60orgzbcbs0pvb8.jpg',
+    'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786833976/rfzc7ij658zaamp1nexi.jpg',
+    'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786833977/a9m7b8mnobncmj5q4dxl.jpg',
+    'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786833978/o5yzzm6vlp7tydfsoej1.jpg',
+    'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786833979/r4ae0zyaaj3dsjidgxwb.jpg',
+    'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786833980/cplxoaipxw2xmy3tffi5.jpg',
+    'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786833981/ob9mkp1daolytrc9djhn.jpg',
+    'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786833983/agcozhaqgm4axod4voy2.jpg',
+    'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786833984/mqd77ipuugssgupxs2fp.jpg',
   ],
 };
 
