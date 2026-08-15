@@ -72,19 +72,19 @@ export default function LightboxModal({ event, onClose }: LightboxModalProps) {
             className="relative w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-[#C9A227]/40 my-8 flex flex-col max-h-[90vh]"
           >
             {/* Header Bar */}
-            <div className="flex items-center justify-between px-6 py-4 bg-[#1A4D2E] text-white border-b border-[#C9A227]/30 flex-shrink-0">
-              <div className="flex items-center gap-3">
-                <span className="bg-[#C9A227] text-[#1A4D2E] text-xs font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">
+            <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 bg-[#1A4D2E] text-white border-b border-[#C9A227]/30 flex-shrink-0 gap-2">
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                <span className="bg-[#C9A227] text-[#1A4D2E] text-[10px] sm:text-xs font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md uppercase tracking-wider flex-shrink-0">
                   {event.event_type}
                 </span>
-                <h3 className="font-ceremonial text-xl sm:text-2xl font-bold truncate max-w-lg">
+                <h3 className="font-ceremonial text-base sm:text-2xl font-bold truncate">
                   {event.title}
                 </h3>
               </div>
               
               <button
                 onClick={onClose}
-                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+                className="p-1.5 sm:p-2 rounded-full bg-white/15 hover:bg-white/25 text-white transition-colors flex-shrink-0 cursor-pointer"
                 aria-label="Close Lightbox"
               >
                 <X className="w-5 h-5" />
