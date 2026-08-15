@@ -3,6 +3,7 @@ import { AcademicSession, ExecutiveMember, EventItem, ProjectItem, Lecturer, Fou
 import {
   LOGO_URL,
   ADMIN_LOGO_URL,
+  HOD_PHOTO_URL,
   PRESIDENT_SPEECH_PHOTO_URL,
   EXEC_PHOTOS,
   EVENT_MEET_EXECUTIVES,
@@ -342,7 +343,7 @@ export const MOCK_LECTURERS: Record<string, Lecturer[]> = {
       session_id: '22222222-2222-2222-2222-222222222222',
       full_name: 'Head of Department (HOD)',
       is_hod: true,
-      photo_url: ADMIN_LOGO_URL,
+      photo_url: HOD_PHOTO_URL,
       display_order: 1,
     },
     {
