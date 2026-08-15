@@ -136,7 +136,7 @@ export default function HomePage() {
       />
 
       {/* Main Single-Page Scroll Content */}
-      <main className="flex-1 w-full max-w-full overflow-x-hidden">
+      <main className="flex-1 w-full max-w-full overflow-x-hidden pt-16 sm:pt-20">
         
         {/* Section 1: President's Address */}
         <PresidentAddress

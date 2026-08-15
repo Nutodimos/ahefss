@@ -46,26 +46,26 @@ export default function Footer({ founder }: FooterProps) {
           </div>
 
           {/* Persistent Global Founder Credit Box (NOT session-scoped) */}
-          <div className="md:col-span-7 bg-white/5 backdrop-blur-md rounded-2xl p-5 border border-[#C9A227]/40 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="md:col-span-7 bg-white/5 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-[#C9A227]/40 flex flex-col sm:flex-row items-center justify-between gap-4 w-full max-w-full">
 
-            <div className="flex items-center gap-4 text-center sm:text-left">
+            <div className="flex items-center gap-3 sm:gap-4 text-left w-full sm:w-auto min-w-0">
               {/* Small Circular Photo with Gold Ring */}
-              <div className="relative w-14 h-14 rounded-full p-[2px] bg-[#C9A227] shadow-md flex-shrink-0">
+              <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full p-[2px] bg-[#C9A227] shadow-md flex-shrink-0">
                 <img
                   src={getOptimizedImageUrl(founder.photo_url || LOGO_URL, { type: 'headshot', width: 200 })}
                   alt={founder.full_name}
                   className="w-full h-full object-cover rounded-full"
                 />
               </div>
-              <div>
-                <div className="flex items-center justify-center sm:justify-start gap-1.5 text-[11px] font-bold text-[#C9A227] uppercase tracking-wider">
-                  <Sparkles className="w-3 h-3" />
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold text-[#C9A227] uppercase tracking-wider">
+                  <Sparkles className="w-3 h-3 flex-shrink-0" />
                   <span>Founder Credit</span>
                 </div>
-                <h4 className="font-ceremonial text-lg font-bold text-white">
+                <h4 className="font-ceremonial text-base sm:text-lg font-bold text-white truncate sm:whitespace-normal">
                   Elevation Era · Founded by {founder.full_name}
                 </h4>
-                <p className="text-xs text-gray-300">
+                <p className="text-[11px] sm:text-xs text-gray-300 truncate sm:whitespace-normal">
                   Commissioning Elevation Administration
                 </p>
               </div>
@@ -74,7 +74,7 @@ export default function Footer({ founder }: FooterProps) {
             {/* Read Vision Button */}
             <button
               onClick={() => setShowFounderModal(true)}
-              className="px-3.5 py-2 rounded-xl bg-[#C9A227] text-[#1A4D2E] text-xs font-bold hover:bg-[#d6b033] transition-colors shadow-md flex items-center gap-1.5 flex-shrink-0 cursor-pointer"
+              className="w-full sm:w-auto justify-center px-3.5 py-2 rounded-xl bg-[#C9A227] text-[#1A4D2E] text-xs font-bold hover:bg-[#d6b033] transition-colors shadow-md flex items-center gap-1.5 flex-shrink-0 cursor-pointer"
             >
               <BookOpen className="w-3.5 h-3.5" />
               <span>Founder's Legacy Vision</span>

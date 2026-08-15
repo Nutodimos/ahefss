@@ -51,16 +51,16 @@ export default function Navbar({
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 glass-nav shadow-sm transition-all duration-300 w-full max-w-full overflow-x-clip">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="flex items-center justify-between h-20">
+    <header className="fixed top-0 left-0 right-0 z-50 glass-nav shadow-sm transition-all duration-300 w-full">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 w-full">
+        <div className="flex items-center justify-between h-16 sm:h-20">
 
           {/* Logo & Association Branding */}
-          <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group">
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
             <motion.div
               whileHover={{ scale: 1.08, rotate: 3 }}
               transition={{ type: 'spring', stiffness: 300 }}
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden ring-gold p-[2px] bg-[#1A4D2E] flex-shrink-0"
+              className="w-9 h-9 sm:w-12 sm:h-12 rounded-full overflow-hidden ring-gold p-[2px] bg-[#1A4D2E] flex-shrink-0"
             >
               <img
                 src={ADMIN_LOGO_URL}
@@ -69,13 +69,13 @@ export default function Navbar({
               />
             </motion.div>
             <div className="flex flex-col">
-              <span className="font-ceremonial text-xl sm:text-2xl font-bold tracking-tight text-[#1A4D2E] leading-none">
+              <span className="font-ceremonial text-lg sm:text-2xl font-bold tracking-tight text-[#1A4D2E] leading-none">
                 AHEFSS
               </span>
-              <span className="text-[10px] sm:text-[11px] font-medium tracking-wider text-[#C9A227] uppercase mt-0.5 flex items-center gap-1">
+              <span className="text-[9px] sm:text-[11px] font-medium tracking-wider text-[#C9A227] uppercase mt-0.5 flex items-center gap-1">
                 <span>Archival</span>
-                <span className="inline-block w-1 h-1 rounded-full bg-[#C9A227]"></span>
-                <span className="font-semibold text-[#1A4D2E] truncate max-w-[110px] sm:max-w-none">{selectedSession.theme_title}</span>
+                <span className="hidden sm:inline-block w-1 h-1 rounded-full bg-[#C9A227]"></span>
+                <span className="hidden sm:inline font-semibold text-[#1A4D2E] truncate">{selectedSession.theme_title}</span>
               </span>
             </div>
           </Link>
@@ -109,21 +109,21 @@ export default function Navbar({
           </nav>
 
           {/* Session Switcher Pill & Controls */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
 
             {/* Session Switcher Dropdown */}
             <div className="relative">
               <motion.button
                 whileTap={{ scale: 0.96 }}
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:py-2 rounded-full bg-[#1A4D2E] text-white text-xs font-medium hover:bg-[#0F3320] transition-all shadow-sm ring-1 ring-[#C9A227]/40 cursor-pointer"
+                className="inline-flex items-center gap-1 sm:gap-2 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-full bg-[#1A4D2E] text-white text-[11px] sm:text-xs font-medium hover:bg-[#0F3320] transition-all shadow-sm ring-1 ring-[#C9A227]/40 cursor-pointer"
                 aria-expanded={dropdownOpen}
                 aria-label="Select Academic Session"
               >
                 {selectedSession.is_active ? (
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="Active Current Session"></span>
+                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 animate-pulse" title="Active Current Session"></span>
                 ) : (
-                  <Sparkles className="w-3.5 h-3.5 text-[#C9A227]" />
+                  <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#C9A227]" />
                 )}
 
                 <span className="font-semibold">{selectedSession.session_code}</span>
@@ -132,7 +132,7 @@ export default function Navbar({
                   animate={{ rotate: dropdownOpen ? 180 : 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <ChevronDown className="w-3.5 h-3.5" />
+                  <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 </motion.div>
               </motion.button>
 
@@ -173,7 +173,7 @@ export default function Navbar({
                               <div className="font-semibold text-gray-900 flex items-center gap-1.5">
                                 <span>{session.session_code}</span>
                                 {session.is_active && (
-                                  <span className="bg-emerald-100 text-emerald-800 text-[9px] px-1.5 py-0.2 rounded-md font-bold uppercase border border-emerald-300 flex items-center gap-0.5">
+                                   <span className="bg-emerald-100 text-emerald-800 text-[9px] px-1.5 py-0.2 rounded-md font-bold uppercase border border-emerald-300 flex items-center gap-0.5">
                                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Active
                                   </span>
                                 )}
@@ -201,7 +201,7 @@ export default function Navbar({
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
                 href="/admin"
-                className="p-2 sm:px-3 sm:py-2 rounded-full bg-[#FDFDF8] border border-[#C9A227] text-[#1A4D2E] hover:bg-[#1A4D2E] hover:text-white transition-all text-xs font-medium flex items-center gap-1.5"
+                className="p-1.5 sm:px-3 sm:py-2 rounded-full bg-[#FDFDF8] border border-[#C9A227] text-[#1A4D2E] hover:bg-[#1A4D2E] hover:text-white transition-all text-xs font-medium flex items-center gap-1.5"
                 title="Admin Dashboard"
               >
                 <UserCheck className="w-3.5 h-3.5 text-[#C9A227]" />
@@ -212,10 +212,10 @@ export default function Navbar({
             {/* Mobile Hamburger Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-xl text-[#1A4D2E] hover:bg-gray-100 transition-colors cursor-pointer"
+              className="lg:hidden p-1.5 rounded-xl text-[#1A4D2E] hover:bg-gray-100 transition-colors cursor-pointer"
               aria-label="Toggle Navigation"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
             </button>
 
           </div>
