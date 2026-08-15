@@ -21,13 +21,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="scroll-smooth h-full antialiased">
+    <html lang="en" className="scroll-smooth h-full antialiased overflow-x-hidden w-full max-w-full">
       <head>
         <link rel="icon" href="/icon.jpg" type="image/jpeg" />
         <link rel="shortcut icon" href="/icon.jpg" type="image/jpeg" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
-      <body className="min-h-full flex flex-col bg-[#FDFDF8] text-[#1A1A1A]">
+      <body className="min-h-full flex flex-col bg-[#FDFDF8] text-[#1A1A1A] overflow-x-hidden w-full max-w-full">
         {children}
       </body>
     </html>

@@ -20,8 +20,8 @@ const listContainerVariants: Variants = {
 };
 
 const listItemVariants: Variants = {
-  hidden: { opacity: 0, x: -20 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.4 } },
+  hidden: { opacity: 0, y: 15 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
 };
 
 export default function Lecturers({ lecturers, themeTitle }: LecturersProps) {
@@ -31,8 +31,8 @@ export default function Lecturers({ lecturers, themeTitle }: LecturersProps) {
     .sort((a, b) => a.display_order - b.display_order);
 
   return (
-    <section id="lecturers" className="py-16 md:py-24 bg-watermark border-b border-[#C9A227]/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="lecturers" className="py-16 md:py-24 bg-watermark border-b border-[#C9A227]/20 scroll-mt-20 overflow-hidden w-full max-w-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         
         {/* Section Header */}
         <motion.div
@@ -102,7 +102,7 @@ export default function Lecturers({ lecturers, themeTitle }: LecturersProps) {
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
+              viewport={{ once: true }}
               transition={{ duration: 0.6 }}
               className="bg-white rounded-3xl p-8 shadow-md border border-gray-200"
             >

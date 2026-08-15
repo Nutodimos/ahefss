@@ -126,7 +126,7 @@ export default function HomePage() {
   const presidentMember = executives.find((e) => e.office_position.toLowerCase().includes('president') && !e.office_position.toLowerCase().includes('vice'));
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FDFDF8] text-[#1A1A1A]">
+    <div className="min-h-screen flex flex-col bg-[#FDFDF8] text-[#1A1A1A] w-full max-w-full overflow-x-hidden">
       
       {/* Navbar with Session Toggle */}
       <Navbar
@@ -136,7 +136,7 @@ export default function HomePage() {
       />
 
       {/* Main Single-Page Scroll Content */}
-      <main className="flex-1">
+      <main className="flex-1 w-full max-w-full overflow-x-hidden">
         
         {/* Section 1: President's Address */}
         <PresidentAddress

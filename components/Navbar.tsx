@@ -51,8 +51,8 @@ export default function Navbar({
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 glass-nav shadow-sm transition-all duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 glass-nav shadow-sm transition-all duration-300 w-full max-w-full overflow-x-clip">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="flex items-center justify-between h-20">
 
           {/* Logo & Association Branding */}
@@ -144,7 +144,7 @@ export default function Navbar({
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute right-0 mt-2 w-64 sm:w-72 rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 py-2 z-50 border border-[#C9A227]/30 divide-y divide-gray-100"
+                    className="absolute right-0 mt-2 w-64 max-w-[calc(100vw-2rem)] sm:w-72 rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 py-2 z-50 border border-[#C9A227]/30 divide-y divide-gray-100"
                     onMouseLeave={() => setDropdownOpen(false)}
                   >
                     <div className="px-3.5 py-2 text-[11px] font-bold text-gray-400 uppercase tracking-wider flex items-center justify-between">

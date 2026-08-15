@@ -35,8 +35,8 @@ export default function ExecutiveCabinet({
   const sortedExecs = [...executives].sort((a, b) => a.display_order - b.display_order);
 
   return (
-    <section id="executives" className="py-16 md:py-24 bg-white border-b border-[#C9A227]/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="executives" className="py-16 md:py-24 bg-white border-b border-[#C9A227]/20 scroll-mt-20 overflow-hidden w-full max-w-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
 
         {/* Section Header */}
         <motion.div

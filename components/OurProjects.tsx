@@ -17,8 +17,8 @@ export default function OurProjects({ projects, themeTitle }: OurProjectsProps) 
   const sortedProjects = [...projects].sort((a, b) => a.display_order - b.display_order);
 
   return (
-    <section id="projects" className="py-16 md:py-24 bg-white border-b border-[#C9A227]/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="projects" className="py-16 md:py-24 bg-white border-b border-[#C9A227]/20 scroll-mt-20 overflow-hidden w-full max-w-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         
         {/* Section Header */}
         <motion.div
@@ -53,8 +53,8 @@ export default function OurProjects({ projects, themeTitle }: OurProjectsProps) 
               return (
                 <motion.div
                   key={project.id}
-                  initial={{ opacity: 0, x: isEven ? -40 : 40 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ duration: 0.7, ease: [0, 0, 0.2, 1] }}
                   whileHover={{ boxShadow: '0 25px 50px -12px rgba(26, 77, 46, 0.15)' }}

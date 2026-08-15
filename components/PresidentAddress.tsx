@@ -31,7 +31,7 @@ export default function PresidentAddress({
   const remainingParagraphs = paragraphs.slice(3);
 
   return (
-    <section id="president" className="py-16 md:py-24 relative overflow-hidden bg-watermark border-b border-[#C9A227]/20">
+    <section id="president" className="py-16 md:py-24 relative overflow-hidden bg-watermark border-b border-[#C9A227]/20 scroll-mt-20 w-full max-w-full">
       
       {/* Subtle Background Accent Ornaments */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-[#1A4D2E]/5 rounded-full blur-3xl -z-10 pointer-events-none"></div>
