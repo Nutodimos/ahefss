@@ -44,8 +44,8 @@ export default function PresidentAddress({
           className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.6 }}
+          viewport={{ once: true, amount: 0.1 }}
+          transition={{ duration: 0.5, ease: [0.21, 0.45, 0.27, 0.9] }}
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A4D2E]/10 border border-[#C9A227]/40 text-[#1A4D2E] text-xs font-semibold uppercase tracking-wider mb-3">
             <Award className="w-3.5 h-3.5 text-[#C9A227]" />
@@ -54,15 +54,21 @@ export default function PresidentAddress({
           <h2 className="font-ceremonial text-4xl sm:text-5xl font-bold text-[#1A4D2E]">
             President's Address
           </h2>
-          <div className="w-24 h-1 bg-[#C9A227] mx-auto mt-4 rounded-full"></div>
+          <motion.div 
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="w-24 h-1 bg-[#C9A227] mx-auto mt-4 rounded-full origin-center"
+          ></motion.div>
         </motion.div>
 
         {/* Content Box */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.7, ease: [0, 0, 0.2, 1] }}
+          viewport={{ once: true, amount: 0.05 }}
+          transition={{ duration: 0.6, ease: [0.21, 0.45, 0.27, 0.9] }}
           className="max-w-4xl mx-auto bg-white rounded-3xl p-6 sm:p-10 shadow-xl border border-[#C9A227]/30 relative"
         >
           
@@ -73,15 +79,16 @@ export default function PresidentAddress({
             {/* Circular President Image with Gold Ring */}
             <motion.div
               className="flex-shrink-0 text-center w-full md:w-60 flex flex-col items-center"
-              initial={{ scale: 0.8, opacity: 0 }}
+              initial={{ scale: 0.85, opacity: 0 }}
               whileInView={{ scale: 1, opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.5, delay: 0.1, ease: [0.21, 0.45, 0.27, 0.9] }}
             >
               <motion.div
                 className="relative w-36 h-36 sm:w-44 sm:h-44 rounded-full p-1 bg-gradient-to-tr from-[#C9A227] via-[#1A4D2E] to-[#C9A227] shadow-lg mx-auto"
                 whileHover={{ scale: 1.05 }}
-                transition={{ type: 'spring', stiffness: 300 }}
+                whileTap={{ scale: 0.96 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
               >
                 <img
                   src={photoUrl}
@@ -100,48 +107,52 @@ export default function PresidentAddress({
               </div>
             </motion.div>
 
-            {/* Address Text */}
-            <div className="flex-1 space-y-4 text-[#1A1A1A] leading-relaxed text-sm sm:text-base">
+            {/* Speech Body */}
+            <div className="flex-1 space-y-4 text-gray-700 leading-relaxed text-sm sm:text-base">
               
-              {initialParagraphs.map((p, idx) => (
-                <p key={idx} className="whitespace-pre-line text-gray-700">
-                  {p}
+              {initialParagraphs.map((para, idx) => (
+                <p key={idx} className={idx === 0 ? "font-medium text-gray-900" : ""}>
+                  {para}
                 </p>
               ))}
 
-              {remainingParagraphs.length > 0 && (
-                <>
-                  <AnimatePresence>
-                    {isExpanded && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.4 }}
-                        className="space-y-4 pt-2 border-t border-gray-100 overflow-hidden"
-                      >
-                        {remainingParagraphs.map((p, idx) => (
-                          <p key={idx} className="whitespace-pre-line text-gray-700">
-                            {p}
-                          </p>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  <button
-                    onClick={() => setIsExpanded(!isExpanded)}
-                    className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#1A4D2E] hover:text-[#0F3320] underline underline-offset-4 cursor-pointer pt-2"
+              {/* Collapsible Remaining Paragraphs */}
+              <AnimatePresence initial={false}>
+                {isExpanded && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.4, ease: [0.21, 0.45, 0.27, 0.9] }}
+                    className="space-y-4 overflow-hidden pt-2"
                   >
-                    <span>{isExpanded ? 'Read Less' : 'Read Full Vision & Welcome Statement'}</span>
+                    {remainingParagraphs.map((para, idx) => (
+                      <p key={idx} className="border-l-2 border-[#C9A227]/40 pl-4 text-gray-600">
+                        {para}
+                      </p>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Read More / Read Less Toggle */}
+              {remainingParagraphs.length > 0 && (
+                <div className="pt-4">
+                  <motion.button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.96 }}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#1A4D2E] text-white font-semibold text-xs sm:text-sm hover:bg-[#0F3320] shadow-md transition-colors"
+                  >
+                    <span>{isExpanded ? 'Show Less' : 'Read Full Welcome Address'}</span>
                     <motion.div
                       animate={{ rotate: isExpanded ? 90 : 0 }}
                       transition={{ duration: 0.2 }}
                     >
                       <ChevronRight className="w-4 h-4" />
                     </motion.div>
-                  </button>
-                </>
+                  </motion.button>
+                </div>
               )}
 
             </div>

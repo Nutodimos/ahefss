@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Founder } from '@/lib/types';
 import { getOptimizedImageUrl } from '@/lib/cloudinary';
 import { LOGO_URL } from '@/lib/assets';
@@ -72,13 +73,15 @@ export default function Footer({ founder }: FooterProps) {
             </div>
 
             {/* Read Vision Button */}
-            <button
+            <motion.button
               onClick={() => setShowFounderModal(true)}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.96 }}
               className="w-full sm:w-auto justify-center px-3.5 py-2 rounded-xl bg-[#C9A227] text-[#1A4D2E] text-xs font-bold hover:bg-[#d6b033] transition-colors shadow-md flex items-center gap-1.5 flex-shrink-0 cursor-pointer"
             >
               <BookOpen className="w-3.5 h-3.5" />
               <span>Founder's Legacy Vision</span>
-            </button>
+            </motion.button>
           </div>
 
         </div>

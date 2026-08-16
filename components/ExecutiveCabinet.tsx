@@ -43,8 +43,8 @@ export default function ExecutiveCabinet({
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.6 }}
+          viewport={{ once: true, amount: 0.1 }}
+          transition={{ duration: 0.5, ease: [0.21, 0.45, 0.27, 0.9] }}
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A4D2E]/10 border border-[#C9A227]/40 text-[#1A4D2E] text-xs font-semibold uppercase tracking-wider mb-3">
             <Users className="w-3.5 h-3.5 text-[#C9A227]" />
@@ -56,7 +56,13 @@ export default function ExecutiveCabinet({
           <p className="mt-3 text-sm sm:text-base text-gray-600 max-w-2xl mx-auto">
             The dedicated student leaders who serve the {themeTitle} administration.
           </p>
-          <div className="w-24 h-1 bg-[#C9A227] mx-auto mt-4 rounded-full"></div>
+          <motion.div
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="w-24 h-1 bg-[#C9A227] mx-auto mt-4 rounded-full origin-center"
+          ></motion.div>
         </motion.div>
 
         {sortedExecs.length === 0 ? (
@@ -64,14 +70,8 @@ export default function ExecutiveCabinet({
             <p className="text-gray-500 font-medium">No executive members listed yet.</p>
           </div>
         ) : (
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
-          >
-          {sortedExecs.map((exec) => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10">
+          {sortedExecs.map((exec, idx) => {
             const formattedWhatsApp = exec.whatsapp_url || `https://wa.me/2348000000000?text=Hello%20${encodeURIComponent(exec.full_name)}`;
 
             return (
@@ -80,9 +80,13 @@ export default function ExecutiveCabinet({
                 href={formattedWhatsApp}
                 target="_blank"
                 rel="noopener noreferrer"
-                variants={cardVariants}
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.05 }}
+                transition={{ duration: 0.45, delay: (idx % 4) * 0.08, ease: [0.21, 0.45, 0.27, 0.9] }}
                 whileHover={{ y: -6, boxShadow: '0 20px 40px rgba(26,77,46,0.15)' }}
-                className="group relative bg-[#FDFDF8] rounded-2xl p-5 border border-gray-100 hover:border-[#C9A227]/60 shadow-sm transition-colors duration-300 flex flex-col items-center text-center overflow-hidden"
+                whileTap={{ scale: 0.97 }}
+                className="group relative bg-[#FDFDF8] rounded-2xl p-5 border border-gray-100 hover:border-[#C9A227]/60 shadow-sm transition-colors duration-300 flex flex-col items-center text-center overflow-hidden active:scale-[0.98]"
               >
                 {/* Photo with Thin Gold Ring Border */}
                 <motion.div
@@ -131,7 +135,7 @@ export default function ExecutiveCabinet({
               </motion.a>
             );
           })}
-          </motion.div>
+          </div>
         )}
 
       </div>

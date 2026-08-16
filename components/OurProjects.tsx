@@ -23,10 +23,10 @@ export default function OurProjects({ projects, themeTitle }: OurProjectsProps) 
         {/* Section Header */}
         <motion.div
           className="text-center mb-16"
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.6 }}
+          viewport={{ once: true, amount: 0.1 }}
+          transition={{ duration: 0.5, ease: [0.21, 0.45, 0.27, 0.9] }}
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A4D2E]/10 border border-[#C9A227]/40 text-[#1A4D2E] text-xs font-semibold uppercase tracking-wider mb-3">
             <FolderGit2 className="w-3.5 h-3.5 text-[#C9A227]" />
@@ -38,7 +38,13 @@ export default function OurProjects({ projects, themeTitle }: OurProjectsProps) 
           <p className="mt-3 text-sm sm:text-base text-gray-600 max-w-2xl mx-auto">
             Tangible infrastructure, academic initiatives, and departmental legacy projects executed during {themeTitle}.
           </p>
-          <div className="w-24 h-1 bg-[#C9A227] mx-auto mt-4 rounded-full"></div>
+          <motion.div
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="w-24 h-1 bg-[#C9A227] mx-auto mt-4 rounded-full origin-center"
+          ></motion.div>
         </motion.div>
 
         {sortedProjects.length === 0 ? (
@@ -53,10 +59,10 @@ export default function OurProjects({ projects, themeTitle }: OurProjectsProps) 
               return (
                 <motion.div
                   key={project.id}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 25 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.7, ease: [0, 0, 0.2, 1] }}
+                  viewport={{ once: true, amount: 0.05 }}
+                  transition={{ duration: 0.55, ease: [0.21, 0.45, 0.27, 0.9] }}
                   whileHover={{ boxShadow: '0 25px 50px -12px rgba(26, 77, 46, 0.15)' }}
                   className="bg-[#FDFDF8] rounded-3xl p-6 sm:p-10 border border-[#C9A227]/30 shadow-lg transition-all duration-300 relative overflow-hidden"
                 >

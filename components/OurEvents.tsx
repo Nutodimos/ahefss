@@ -24,8 +24,8 @@ export default function OurEvents({ events, themeTitle }: OurEventsProps) {
           className="text-center mb-14"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-50px' }}
-          transition={{ duration: 0.6 }}
+          viewport={{ once: true, amount: 0.1 }}
+          transition={{ duration: 0.5, ease: [0.21, 0.45, 0.27, 0.9] }}
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A4D2E]/10 border border-[#C9A227]/40 text-[#1A4D2E] text-xs font-semibold uppercase tracking-wider mb-3">
             <Sparkles className="w-3.5 h-3.5 text-[#C9A227]" />
@@ -37,7 +37,13 @@ export default function OurEvents({ events, themeTitle }: OurEventsProps) {
           <p className="mt-3 text-sm sm:text-base text-gray-600 max-w-2xl mx-auto">
             Key programs, workshops, and exhibitions hosted during {themeTitle}. Click any card to open the interactive photo gallery.
           </p>
-          <div className="w-24 h-1 bg-[#C9A227] mx-auto mt-4 rounded-full"></div>
+          <motion.div
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="w-24 h-1 bg-[#C9A227] mx-auto mt-4 rounded-full origin-center"
+          ></motion.div>
         </motion.div>
 
         {/* Events Grid */}
@@ -58,13 +64,14 @@ export default function OurEvents({ events, themeTitle }: OurEventsProps) {
               return (
                 <motion.div
                   key={event.id}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 25 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "0px 0px -40px 0px" }}
-                  transition={{ duration: 0.5, delay: (index % 2) * 0.1, ease: [0, 0, 0.2, 1] }}
+                  viewport={{ once: true, amount: 0.05 }}
+                  transition={{ duration: 0.45, delay: (index % 2) * 0.08, ease: [0.21, 0.45, 0.27, 0.9] }}
                   whileHover={{ y: -8, boxShadow: '0 25px 50px -12px rgba(26, 77, 46, 0.25)' }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => setSelectedEvent(event)}
-                  className="group bg-white rounded-3xl overflow-hidden border border-gray-100 hover:border-[#C9A227] shadow-md transition-all duration-300 flex flex-col cursor-pointer"
+                  className="group bg-white rounded-3xl overflow-hidden border border-gray-100 hover:border-[#C9A227] shadow-md transition-all duration-300 flex flex-col cursor-pointer active:scale-[0.99]"
                 >
                   {/* Flyer Banner Header */}
                   <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-gray-900">
