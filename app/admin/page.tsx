@@ -38,8 +38,10 @@ import {
   KeyRound,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function AdminDashboardPage() {
+  const router = useRouter();
   const [sessions, setSessions] = useState<AcademicSession[]>(MOCK_SESSIONS);
   const [selectedSession, setSelectedSession] = useState<AcademicSession>(MOCK_SESSIONS[0]);
 
@@ -52,6 +54,17 @@ export default function AdminDashboardPage() {
   const [showSessionWizard, setShowSessionWizard] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  // Defense-in-depth client-side session validation
+  useEffect(() => {
+    if (supabase) {
+      supabase.auth.getUser().then(({ data: { user }, error }) => {
+        if (error || !user) {
+          router.replace('/admin/login');
+        }
+      });
+    }
+  }, [router]);
 
   // Fetch initial sessions
   useEffect(() => {
