@@ -429,7 +429,7 @@ export const MOCK_LECTURERS: Record<string, Lecturer[]> = {
     {
       id: 'lec-12',
       session_id: '22222222-2222-2222-2222-222222222222',
-      full_name: 'Mrs. Abdulquadri',
+      full_name: 'Mrs. W. O. Johnson',
       is_hod: false,
       photo_url: null,
       display_order: 12,
@@ -437,10 +437,34 @@ export const MOCK_LECTURERS: Record<string, Lecturer[]> = {
     {
       id: 'lec-13',
       session_id: '22222222-2222-2222-2222-222222222222',
-      full_name: 'Mr. Kareem',
+      full_name: 'Mrs. Abdulquadri',
       is_hod: false,
       photo_url: null,
       display_order: 13,
+    },
+    {
+      id: 'lec-14',
+      session_id: '22222222-2222-2222-2222-222222222222',
+      full_name: 'Mr. Kareem',
+      is_hod: false,
+      photo_url: null,
+      display_order: 14,
+    },
+    {
+      id: 'lec-15',
+      session_id: '22222222-2222-2222-2222-222222222222',
+      full_name: 'Mrs. Abdulmaleek Aisha',
+      is_hod: false,
+      photo_url: null,
+      display_order: 15,
+    },
+    {
+      id: 'lec-16',
+      session_id: '22222222-2222-2222-2222-222222222222',
+      full_name: 'Mrs. Faidat Alawode',
+      is_hod: false,
+      photo_url: null,
+      display_order: 16,
     },
   ]
 };
