@@ -37,10 +37,10 @@ export const PRESIDENT_SPEECH_PHOTO_URL = 'https://res.cloudinary.com/q9jb9wvk/i
 export const EXEC_PHOTOS: Record<string, string | null> = {
   president:                 'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786814764/w6o7r1zhl7smu6w0cmj6.jpg',
   vicePresident:             'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786814765/ijqntlfu1nmarpvwtnhs.jpg',
-  generalSecretary:          null, // Photo pending
+  generalSecretary:          'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786958867/nevg84ckh6tunsdfcbx8.jpg',
   assistantGeneralSecretary: 'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786832413/re39ljfulmfqghwnivzh.jpg',
   directorOfFinance:         'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786832414/fyzpwolhfwwywd4ycfkr.jpg',
-  welfareSecretary:          'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786832419/azxwyhpgsz1cee8pnojq.jpg',
+  welfareSecretary:          'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786958880/a6tdisicbntzq05y2k0v.jpg',
   pro:                       'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786832415/wfutytwtyfvcxadbzmww.jpg',
   pro2:                      'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786814766/ya5qxuvsqkfgi3df1qhf.jpg',
   sportSecretary:            'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786832417/j88kb6ar9u8ancacom2j.jpg',
@@ -59,6 +59,7 @@ export const EVENT_MEET_EXECUTIVES = {
     EXECUTIVES_FLYER_URL,
     EXEC_PHOTOS.president!,
     EXEC_PHOTOS.vicePresident!,
+    EXEC_PHOTOS.generalSecretary!,
     EXEC_PHOTOS.assistantGeneralSecretary!,
     EXEC_PHOTOS.directorOfFinance!,
     EXEC_PHOTOS.welfareSecretary!,
