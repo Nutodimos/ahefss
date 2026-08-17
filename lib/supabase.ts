@@ -21,6 +21,7 @@ import {
   EVENT_ORIENTATION_PROGRAM,
   PROJECT_DEPT_SIGNAGE,
   PROJECT_DIGITAL_PORTAL,
+  PROJECT_BUILDING_RENOVATION,
 } from './assets';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -332,6 +333,15 @@ export const MOCK_PROJECTS: Record<string, ProjectItem[]> = {
       summary_text: 'A landmark digital infrastructure project designed to permanently archive departmental history, executive achievements, event photo galleries, and lecturer directories across all academic sessions. This website is that project.',
       photo_gallery: PROJECT_DIGITAL_PORTAL.gallery,
       display_order: 2,
+    },
+    {
+      id: 'project-building-renovation',
+      session_id: '22222222-2222-2222-2222-222222222222',
+      title: 'Departmental Building & Physical Infrastructure Project',
+      cover_image_url: PROJECT_BUILDING_RENOVATION.cover,
+      summary_text: 'A major infrastructure overhaul and structural beautification project aimed at revitalizing departmental facilities, teaching spaces, and physical surroundings for improved student learning and administrative pride.',
+      photo_gallery: PROJECT_BUILDING_RENOVATION.gallery,
+      display_order: 3,
     },
   ]
 };
