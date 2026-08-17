@@ -233,6 +233,8 @@ export const PROJECT_DEPT_SIGNAGE = {
 };
 
 export const PROJECT_DIGITAL_PORTAL = {
-  cover:   LOGO_URL, // Association logo as stand-in — no dedicated screenshot yet
-  gallery: [] as string[],
+  cover: 'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786976589/yal4a3tcpvwlhsfmaql9.jpg',
+  gallery: [
+    'https://res.cloudinary.com/q9jb9wvk/image/upload/v1786976589/yal4a3tcpvwlhsfmaql9.jpg',
+  ],
 };
