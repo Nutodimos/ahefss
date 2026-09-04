@@ -24,8 +24,20 @@ import {
   PROJECT_BUILDING_RENOVATION,
 } from './assets';
 
+function getValidKey(...keys: (string | undefined)[]): string {
+  for (const k of keys) {
+    if (k && k !== 'your-supabase-anon-key-here' && k !== 'your-anon-key-here' && k.trim().length > 0) {
+      return k.trim();
+    }
+  }
+  return '';
+}
+
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || '';
+const supabaseAnonKey = getValidKey(
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
 
 export const supabase = supabaseUrl && supabaseAnonKey
   ? createBrowserClient(supabaseUrl, supabaseAnonKey)

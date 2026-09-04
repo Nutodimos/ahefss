@@ -4,7 +4,8 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const rawKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+  const supabaseAnonKey = rawKey !== 'your-supabase-anon-key-here' && rawKey !== 'your-anon-key-here' ? rawKey.trim() : '';
 
   if (!supabaseUrl || !supabaseAnonKey) {
     return NextResponse.json(
