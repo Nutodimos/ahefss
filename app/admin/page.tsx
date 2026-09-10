@@ -103,7 +103,7 @@ export default function AdminDashboardPage() {
           }
 
           const activeSessionData = sessionData
-            ? sessionData.filter((s) => !s.is_archived && s.session_code !== '2026/2027')
+            ? sessionData.filter((s) => !s.is_archived)
             : null;
 
           let combined: AcademicSession[];

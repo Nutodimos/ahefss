@@ -57,7 +57,7 @@ export default function HomePage() {
             .order('created_at', { ascending: false });
 
           const activeSessionData = sessionData
-            ? sessionData.filter((s) => !s.is_archived && s.session_code !== '2026/2027')
+            ? sessionData.filter((s) => !s.is_archived)
             : null;
 
           if (activeSessionData && activeSessionData.length > 0) {
