@@ -2,9 +2,15 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AHEFSS — Association Archival & Session Platform | The Elevation Era",
+  title: "Association of Home Economics and Food Science Students",
   description: "Official digital portal and legacy archive for the Association of Home Economics and Food Science Students (AHEFSS). Exploring executive cabinets, events, projects, and academic sessions.",
-  keywords: ["AHEFSS", "Home Economics", "Food Science", "Elevation Era", "Archival Platform", "University Association"],
+  applicationName: "Association of Home Economics and Food Science Students",
+  keywords: ["AHEFSS", "Home Economics", "Food Science", "Elevation Era", "Archival Platform", "University Association", "Association of Home Economics and Food Science Students"],
+  openGraph: {
+    title: "Association of Home Economics and Food Science Students",
+    siteName: "Association of Home Economics and Food Science Students",
+    description: "Official digital portal and legacy archive for the Association of Home Economics and Food Science Students (AHEFSS). Exploring executive cabinets, events, projects, and academic sessions.",
+  },
   icons: {
     icon: [
       { url: "/icon.jpg", type: "image/jpeg" },
