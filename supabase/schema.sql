@@ -5,6 +5,7 @@ CREATE TABLE academic_sessions (
   theme_title TEXT NOT NULL,
   is_pioneer BOOLEAN DEFAULT false,
   is_active BOOLEAN DEFAULT false,
+  is_archived BOOLEAN DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

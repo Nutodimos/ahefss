@@ -56,9 +56,11 @@ export default function HomePage() {
             .select('*')
             .order('created_at', { ascending: false });
 
-          if (sessionData && sessionData.length > 0) {
-            const hasPioneer = sessionData.some((s) => s.id === MOCK_SESSIONS[0].id || s.is_pioneer);
-            const hasActiveInDb = sessionData.some((s) => s.is_active);
+          const activeSessionData = sessionData ? sessionData.filter((s) => !s.is_archived) : null;
+
+          if (activeSessionData && activeSessionData.length > 0) {
+            const hasPioneer = activeSessionData.some((s) => s.id === MOCK_SESSIONS[0].id || s.is_pioneer);
+            const hasActiveInDb = activeSessionData.some((s) => s.is_active);
             
             // Respect whatever session the admin marked active in storage.
             // Only mark the fallback pioneer active if no session in storage is marked active.
@@ -68,8 +70,8 @@ export default function HomePage() {
             };
 
             const combinedSessions = hasPioneer
-              ? sessionData
-              : [...sessionData, pioneerFallback];
+              ? activeSessionData
+              : [...activeSessionData, pioneerFallback];
 
             // Strictly enforce that only ONE session has is_active: true
             let foundActive = false;

@@ -4,6 +4,7 @@ export interface AcademicSession {
   theme_title: string;
   is_pioneer: boolean;
   is_active: boolean;
+  is_archived?: boolean;
   created_at?: string;
 }
 

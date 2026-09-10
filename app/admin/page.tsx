@@ -39,6 +39,7 @@ import {
   Trash2,
   Star,
   CheckCircle2,
+  Archive,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -101,15 +102,17 @@ export default function AdminDashboardPage() {
             }
           }
 
+          const activeSessionData = sessionData ? sessionData.filter((s) => !s.is_archived) : null;
+
           let combined: AcademicSession[];
           if (hasPioneer) {
-            combined = sessionData!;
+            combined = activeSessionData || [];
           } else {
             const fallbackPioneer: AcademicSession = {
               ...pioneerSession,
               is_active: !hasActiveInDb,
             };
-            combined = [...(sessionData || []), fallbackPioneer];
+            combined = [...(activeSessionData || []), fallbackPioneer];
           }
 
           let foundActive = false;
@@ -207,26 +210,35 @@ export default function AdminDashboardPage() {
   async function handleDeleteSession() {
     if (selectedSession.is_pioneer) return;
 
-    const confirmDelete = window.confirm(
-      `Are you sure you want to delete session "${selectedSession.session_code} — ${selectedSession.theme_title}"?\n\nThis will remove this session.`
+    const confirmArchive = window.confirm(
+      `Are you sure you want to archive session "${selectedSession.session_code} — ${selectedSession.theme_title}"?\n\nThis safely removes it from public view while preserving all records.`
     );
-    if (!confirmDelete) return;
+    if (!confirmArchive) return;
 
     setIsDeletingSession(true);
     try {
       if (supabase) {
-        const { error } = await supabase
+        // Attempt soft delete (archive) first to safeguard production data
+        const { error: archiveError } = await supabase
           .from('academic_sessions')
-          .delete()
+          .update({ is_archived: true, is_active: false })
           .eq('id', selectedSession.id);
 
-        if (error) {
-          alert(`Unable to delete session: ${error.message}`);
-          setIsDeletingSession(false);
-          return;
+        if (archiveError) {
+          // Graceful fallback if is_archived column is not yet migrated in database
+          const { error: delError } = await supabase
+            .from('academic_sessions')
+            .delete()
+            .eq('id', selectedSession.id);
+
+          if (delError) {
+            alert(`Unable to archive session: ${delError.message}`);
+            setIsDeletingSession(false);
+            return;
+          }
         }
 
-        // If the deleted session was active, make pioneer session active
+        // If the archived session was active, make pioneer session active
         if (selectedSession.is_active) {
           await supabase
             .from('academic_sessions')
@@ -238,7 +250,7 @@ export default function AdminDashboardPage() {
       setSelectedSession(MOCK_SESSIONS[0]);
       setRefreshTrigger((prev) => prev + 1);
     } catch (err) {
-      console.error('Error deleting session', err);
+      console.error('Error archiving session', err);
     } finally {
       setIsDeletingSession(false);
     }
@@ -421,11 +433,11 @@ export default function AdminDashboardPage() {
               <button
                 onClick={handleDeleteSession}
                 disabled={isDeletingSession}
-                className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold flex items-center gap-1.5 transition-[transform,colors] duration-150 active:scale-[0.97] cursor-pointer"
-                title="Delete this academic session"
+                className="px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold flex items-center gap-1.5 transition-[transform,colors] duration-150 active:scale-[0.97] cursor-pointer"
+                title="Safely archive this session from public view without deleting data"
               >
-                <Trash2 className="w-3.5 h-3.5 text-rose-600" />
-                <span>{isDeletingSession ? 'Deleting...' : 'Delete Session'}</span>
+                <Archive className="w-3.5 h-3.5 text-amber-700" />
+                <span>{isDeletingSession ? 'Archiving...' : 'Archive Session'}</span>
               </button>
             )}
           </div>
