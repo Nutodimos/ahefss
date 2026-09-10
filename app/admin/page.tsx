@@ -210,47 +210,36 @@ export default function AdminDashboardPage() {
   async function handleDeleteSession() {
     if (selectedSession.is_pioneer) return;
 
-    const confirmArchive = window.confirm(
-      `Are you sure you want to archive session "${selectedSession.session_code} — ${selectedSession.theme_title}"?\n\nThis safely removes it from public view while preserving all records.`
+    const confirmDelete = window.confirm(
+      `Are you sure you want to remove session "${selectedSession.session_code} — ${selectedSession.theme_title}" from the database?`
     );
-    if (!confirmArchive) return;
+    if (!confirmDelete) return;
 
     setIsDeletingSession(true);
     try {
       if (supabase) {
-        // Attempt soft delete (archive) first to safeguard production data
-        const { error: archiveError } = await supabase
+        const { error } = await supabase
           .from('academic_sessions')
-          .update({ is_archived: true, is_active: false })
+          .delete()
           .eq('id', selectedSession.id);
 
-        if (archiveError) {
-          // Graceful fallback if is_archived column is not yet migrated in database
-          const { error: delError } = await supabase
-            .from('academic_sessions')
-            .delete()
-            .eq('id', selectedSession.id);
-
-          if (delError) {
-            alert(`Unable to archive session: ${delError.message}`);
-            setIsDeletingSession(false);
-            return;
-          }
+        if (error) {
+          alert(`Unable to remove session: ${error.message}`);
+          setIsDeletingSession(false);
+          return;
         }
 
-        // If the archived session was active, make pioneer session active
-        if (selectedSession.is_active) {
-          await supabase
-            .from('academic_sessions')
-            .update({ is_active: true })
-            .eq('id', MOCK_SESSIONS[0].id);
-        }
+        // Ensure pioneer session is set as active
+        await supabase
+          .from('academic_sessions')
+          .update({ is_active: true })
+          .eq('id', MOCK_SESSIONS[0].id);
       }
 
       setSelectedSession(MOCK_SESSIONS[0]);
       setRefreshTrigger((prev) => prev + 1);
     } catch (err) {
-      console.error('Error archiving session', err);
+      console.error('Error removing session', err);
     } finally {
       setIsDeletingSession(false);
     }
@@ -433,11 +422,11 @@ export default function AdminDashboardPage() {
               <button
                 onClick={handleDeleteSession}
                 disabled={isDeletingSession}
-                className="px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold flex items-center gap-1.5 transition-[transform,colors] duration-150 active:scale-[0.97] cursor-pointer"
-                title="Safely archive this session from public view without deleting data"
+                className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold flex items-center gap-1.5 transition-[transform,colors] duration-150 active:scale-[0.97] cursor-pointer"
+                title="Remove this session from the database"
               >
-                <Archive className="w-3.5 h-3.5 text-amber-700" />
-                <span>{isDeletingSession ? 'Archiving...' : 'Archive Session'}</span>
+                <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                <span>{isDeletingSession ? 'Removing...' : 'Delete Session'}</span>
               </button>
             )}
           </div>
