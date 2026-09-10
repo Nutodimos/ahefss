@@ -88,16 +88,22 @@ CREATE POLICY "Allow authenticated access to projects" ON projects FOR ALL USING
 CREATE POLICY "Allow authenticated access to lecturers" ON lecturers FOR ALL USING (auth.role() = 'authenticated');
 CREATE POLICY "Allow authenticated access to founder" ON founder FOR ALL USING (auth.role() = 'authenticated');
 
--- Create Pioneer Lock Trigger
+-- Create Pioneer Lock Trigger (locks core identity and prevents deletion, allows is_active toggle)
 CREATE OR REPLACE FUNCTION prevent_pioneer_edit()
 RETURNS TRIGGER AS $$
 BEGIN
-  -- Prevent updates/deletes to any session where is_pioneer = true
-  IF (TG_OP = 'UPDATE' OR TG_OP = 'DELETE') THEN
-    IF OLD.is_pioneer = true THEN
-      RAISE EXCEPTION 'Pioneer session data cannot be modified or deleted.';
+  -- Prevent deletion of pioneer session
+  IF TG_OP = 'DELETE' AND OLD.is_pioneer = true THEN
+    RAISE EXCEPTION 'Pioneer session data cannot be deleted.';
+  END IF;
+
+  -- Prevent modifying pioneer identity or removing pioneer status
+  IF TG_OP = 'UPDATE' AND OLD.is_pioneer = true THEN
+    IF NEW.id <> OLD.id OR NEW.session_code <> OLD.session_code OR NEW.theme_title <> OLD.theme_title OR NEW.is_pioneer <> true THEN
+      RAISE EXCEPTION 'Pioneer session core identity cannot be modified.';
     END IF;
   END IF;
+
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -106,3 +112,4 @@ CREATE TRIGGER lock_pioneer_sessions
   BEFORE UPDATE OR DELETE ON academic_sessions
   FOR EACH ROW
   EXECUTE FUNCTION prevent_pioneer_edit();
+

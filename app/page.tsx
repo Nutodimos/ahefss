@@ -56,7 +56,9 @@ export default function HomePage() {
             .select('*')
             .order('created_at', { ascending: false });
 
-          const activeSessionData = sessionData ? sessionData.filter((s) => !s.is_archived) : null;
+          const activeSessionData = sessionData
+            ? sessionData.filter((s) => !s.is_archived && s.session_code !== '2026/2027')
+            : null;
 
           if (activeSessionData && activeSessionData.length > 0) {
             const hasPioneer = activeSessionData.some((s) => s.id === MOCK_SESSIONS[0].id || s.is_pioneer);
@@ -88,8 +90,9 @@ export default function HomePage() {
             }
 
             setSessions(normalizedSessions);
-            const active = normalizedSessions.find((s) => s.is_active) || normalizedSessions[0];
-            setSelectedSession(active);
+            const pioneer = normalizedSessions.find((s) => s.is_pioneer || s.id === MOCK_SESSIONS[0].id);
+            const active = normalizedSessions.find((s) => s.is_active);
+            setSelectedSession(active || pioneer || normalizedSessions[0]);
           } else {
             setSessions(MOCK_SESSIONS);
             setSelectedSession(MOCK_SESSIONS[0]);

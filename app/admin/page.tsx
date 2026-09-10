@@ -102,7 +102,9 @@ export default function AdminDashboardPage() {
             }
           }
 
-          const activeSessionData = sessionData ? sessionData.filter((s) => !s.is_archived) : null;
+          const activeSessionData = sessionData
+            ? sessionData.filter((s) => !s.is_archived && s.session_code !== '2026/2027')
+            : null;
 
           let combined: AcademicSession[];
           if (hasPioneer) {
@@ -216,12 +218,14 @@ export default function AdminDashboardPage() {
     if (!confirmDelete) return;
 
     setIsDeletingSession(true);
+    const targetSessionId = selectedSession.id;
+
     try {
       if (supabase) {
         const { error } = await supabase
           .from('academic_sessions')
           .delete()
-          .eq('id', selectedSession.id);
+          .eq('id', targetSessionId);
 
         if (error) {
           alert(`Unable to remove session: ${error.message}`);
@@ -229,13 +233,19 @@ export default function AdminDashboardPage() {
           return;
         }
 
-        // Ensure pioneer session is set as active
-        await supabase
-          .from('academic_sessions')
-          .update({ is_active: true })
-          .eq('id', MOCK_SESSIONS[0].id);
+        // Try setting pioneer session active in database if permitted
+        try {
+          await supabase
+            .from('academic_sessions')
+            .update({ is_active: true })
+            .eq('id', MOCK_SESSIONS[0].id);
+        } catch {
+          // Ignored if pioneer lock trigger restricts direct updates
+        }
       }
 
+      // Immediately filter out the removed session in UI state
+      setSessions((prev) => prev.filter((s) => s.id !== targetSessionId));
       setSelectedSession(MOCK_SESSIONS[0]);
       setRefreshTrigger((prev) => prev + 1);
     } catch (err) {
@@ -249,15 +259,23 @@ export default function AdminDashboardPage() {
     setIsSettingActive(true);
     try {
       if (supabase) {
-        await supabase
-          .from('academic_sessions')
-          .update({ is_active: false })
-          .neq('id', selectedSession.id);
+        try {
+          await supabase
+            .from('academic_sessions')
+            .update({ is_active: false })
+            .neq('id', selectedSession.id);
+        } catch (deactErr) {
+          console.warn('Could not deactivate other sessions in database', deactErr);
+        }
 
-        await supabase
-          .from('academic_sessions')
-          .update({ is_active: true })
-          .eq('id', selectedSession.id);
+        try {
+          await supabase
+            .from('academic_sessions')
+            .update({ is_active: true })
+            .eq('id', selectedSession.id);
+        } catch (actErr) {
+          console.warn('Could not activate session in database', actErr);
+        }
       }
 
       setSessions((prev) =>

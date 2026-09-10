@@ -14,14 +14,19 @@ export default function AdminSessionWizard({
   onSessionCreated,
   onClose,
 }: AdminSessionWizardProps) {
-  const [sessionCode, setSessionCode] = useState('2026/2027');
-  const [themeTitle, setThemeTitle] = useState('New Era');
+  const [sessionCode, setSessionCode] = useState('');
+  const [themeTitle, setThemeTitle] = useState('');
   const [isActive, setIsActive] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   async function handleCreateSession(e: React.FormEvent) {
     e.preventDefault();
+    if (!sessionCode.trim() || !themeTitle.trim()) {
+      setErrorMsg('Please enter both the session code and theme title.');
+      return;
+    }
+
     setLoading(true);
     setErrorMsg(null);
 
@@ -36,10 +41,14 @@ export default function AdminSessionWizard({
 
     if (supabase) {
       if (isActive) {
-        await supabase
-          .from('academic_sessions')
-          .update({ is_active: false })
-          .neq('id', newSessionData.id);
+        try {
+          await supabase
+            .from('academic_sessions')
+            .update({ is_active: false })
+            .neq('id', newSessionData.id);
+        } catch (deactErr) {
+          console.warn('Could not deactivate existing sessions', deactErr);
+        }
       }
 
       const { data, error } = await supabase
