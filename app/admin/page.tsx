@@ -36,6 +36,9 @@ import {
   ArrowLeft,
   LogOut,
   KeyRound,
+  Trash2,
+  Star,
+  CheckCircle2,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -54,6 +57,8 @@ export default function AdminDashboardPage() {
   const [showSessionWizard, setShowSessionWizard] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [isDeletingSession, setIsDeletingSession] = useState(false);
+  const [isSettingActive, setIsSettingActive] = useState(false);
 
   // Defense-in-depth client-side session validation
   useEffect(() => {
@@ -76,12 +81,56 @@ export default function AdminDashboardPage() {
             .select('*')
             .order('created_at', { ascending: false });
 
-          if (sessionData && sessionData.length > 0) {
-            setSessions(sessionData);
-            if (!selectedSession || !sessionData.find((s) => s.id === selectedSession.id)) {
-              setSelectedSession(sessionData[0]);
+          const pioneerSession = MOCK_SESSIONS[0];
+          const hasPioneer = sessionData?.some((s) => s.id === pioneerSession.id || s.is_pioneer);
+          const hasActiveInDb = sessionData?.some((s) => s.is_active);
+
+          // If pioneer session not in remote storage, auto-seed it for permanence
+          if (!hasPioneer && sessionData) {
+            try {
+              await supabase.from('academic_sessions').insert([{
+                id: pioneerSession.id,
+                session_code: pioneerSession.session_code,
+                theme_title: pioneerSession.theme_title,
+                is_pioneer: true,
+                is_active: !hasActiveInDb,
+                created_at: pioneerSession.created_at || new Date().toISOString()
+              }]);
+            } catch (seedErr) {
+              console.warn('Could not auto-seed pioneer session', seedErr);
             }
           }
+
+          let combined: AcademicSession[];
+          if (hasPioneer) {
+            combined = sessionData!;
+          } else {
+            const fallbackPioneer: AcademicSession = {
+              ...pioneerSession,
+              is_active: !hasActiveInDb,
+            };
+            combined = [...(sessionData || []), fallbackPioneer];
+          }
+
+          let foundActive = false;
+          const normalized = combined.map((s) => {
+            if (s.is_active && !foundActive) {
+              foundActive = true;
+              return s;
+            }
+            return { ...s, is_active: false };
+          });
+          if (!foundActive && normalized.length > 0) {
+            normalized[0].is_active = true;
+          }
+
+          setSessions(normalized);
+          setSelectedSession((prev) => {
+            if (prev && normalized.find((s) => s.id === prev.id)) {
+              return normalized.find((s) => s.id === prev.id)!;
+            }
+            return normalized.find((s) => s.is_active) || normalized[0];
+          });
         } catch (err) {
           console.error('Supabase admin fetch error', err);
         }
@@ -153,6 +202,79 @@ export default function AdminDashboardPage() {
     setSessions((prev) => [newSession, ...prev]);
     setSelectedSession(newSession);
     setRefreshTrigger((prev) => prev + 1);
+  }
+
+  async function handleDeleteSession() {
+    if (selectedSession.is_pioneer) return;
+
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete session "${selectedSession.session_code} — ${selectedSession.theme_title}"?\n\nThis will remove this session.`
+    );
+    if (!confirmDelete) return;
+
+    setIsDeletingSession(true);
+    try {
+      if (supabase) {
+        const { error } = await supabase
+          .from('academic_sessions')
+          .delete()
+          .eq('id', selectedSession.id);
+
+        if (error) {
+          alert(`Unable to delete session: ${error.message}`);
+          setIsDeletingSession(false);
+          return;
+        }
+
+        // If the deleted session was active, make pioneer session active
+        if (selectedSession.is_active) {
+          await supabase
+            .from('academic_sessions')
+            .update({ is_active: true })
+            .eq('id', MOCK_SESSIONS[0].id);
+        }
+      }
+
+      setSelectedSession(MOCK_SESSIONS[0]);
+      setRefreshTrigger((prev) => prev + 1);
+    } catch (err) {
+      console.error('Error deleting session', err);
+    } finally {
+      setIsDeletingSession(false);
+    }
+  }
+
+  async function handleSetActiveSession() {
+    setIsSettingActive(true);
+    try {
+      if (supabase) {
+        await supabase
+          .from('academic_sessions')
+          .update({ is_active: false })
+          .neq('id', selectedSession.id);
+
+        await supabase
+          .from('academic_sessions')
+          .update({ is_active: true })
+          .eq('id', selectedSession.id);
+      }
+
+      setSessions((prev) =>
+        prev.map((s) => ({
+          ...s,
+          is_active: s.id === selectedSession.id,
+        }))
+      );
+      setSelectedSession((prev) => ({
+        ...prev,
+        is_active: true,
+      }));
+      setRefreshTrigger((prev) => prev + 1);
+    } catch (err) {
+      console.error('Error setting active session', err);
+    } finally {
+      setIsSettingActive(false);
+    }
   }
 
   async function handleLogout() {
@@ -246,9 +368,9 @@ export default function AdminDashboardPage() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
         {/* Selected Session Status Banner */}
-        <div className="bg-white rounded-3xl p-6 border border-[#C9A227]/30 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2">
+        <div className="bg-white rounded-3xl p-6 border border-[#C9A227]/30 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Editing Session</span>
               {selectedSession.is_pioneer ? (
                 <span className="bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
@@ -259,23 +381,53 @@ export default function AdminDashboardPage() {
                   <ShieldCheck className="w-3 h-3 text-emerald-700" /> Standard Editable Session
                 </span>
               )}
+
+              {selectedSession.is_active ? (
+                <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Active Landing View
+                </span>
+              ) : (
+                <button
+                  onClick={handleSetActiveSession}
+                  disabled={isSettingActive}
+                  className="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 transition-[transform,colors] duration-150 active:scale-[0.97] cursor-pointer"
+                  title="Make this the default session visitors see first"
+                >
+                  <Star className="w-3 h-3 text-amber-600" />
+                  <span>{isSettingActive ? 'Updating...' : 'Set as Active Landing View'}</span>
+                </button>
+              )}
             </div>
 
-            <h2 className="font-ceremonial text-3xl font-bold text-[#1A4D2E] mt-1">
+            <h2 className="font-ceremonial text-3xl font-bold text-[#1A4D2E]">
               {selectedSession.session_code} — {selectedSession.theme_title}
             </h2>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-semibold text-gray-500">
-            <span className="bg-gray-100 px-3 py-1.5 rounded-xl border border-gray-200">
-              {executives.length} Execs
-            </span>
-            <span className="bg-gray-100 px-3 py-1.5 rounded-xl border border-gray-200">
-              {events.length} Events
-            </span>
-            <span className="bg-gray-100 px-3 py-1.5 rounded-xl border border-gray-200">
-              {projects.length} Projects
-            </span>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2 text-xs font-semibold text-gray-500">
+              <span className="bg-gray-100 px-3 py-1.5 rounded-xl border border-gray-200">
+                {executives.length} Execs
+              </span>
+              <span className="bg-gray-100 px-3 py-1.5 rounded-xl border border-gray-200">
+                {events.length} Events
+              </span>
+              <span className="bg-gray-100 px-3 py-1.5 rounded-xl border border-gray-200">
+                {projects.length} Projects
+              </span>
+            </div>
+
+            {!selectedSession.is_pioneer && (
+              <button
+                onClick={handleDeleteSession}
+                disabled={isDeletingSession}
+                className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold flex items-center gap-1.5 transition-[transform,colors] duration-150 active:scale-[0.97] cursor-pointer"
+                title="Delete this academic session"
+              >
+                <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                <span>{isDeletingSession ? 'Deleting...' : 'Delete Session'}</span>
+              </button>
+            )}
           </div>
         </div>
 

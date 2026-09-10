@@ -57,9 +57,40 @@ export default function HomePage() {
             .order('created_at', { ascending: false });
 
           if (sessionData && sessionData.length > 0) {
-            setSessions(sessionData);
-            const active = sessionData.find((s) => s.is_active) || sessionData[0];
+            const hasPioneer = sessionData.some((s) => s.id === MOCK_SESSIONS[0].id || s.is_pioneer);
+            const hasActiveInDb = sessionData.some((s) => s.is_active);
+            
+            // Respect whatever session the admin marked active in storage.
+            // Only mark the fallback pioneer active if no session in storage is marked active.
+            const pioneerFallback: AcademicSession = {
+              ...MOCK_SESSIONS[0],
+              is_active: !hasActiveInDb,
+            };
+
+            const combinedSessions = hasPioneer
+              ? sessionData
+              : [...sessionData, pioneerFallback];
+
+            // Strictly enforce that only ONE session has is_active: true
+            let foundActive = false;
+            const normalizedSessions = combinedSessions.map((s) => {
+              if (s.is_active && !foundActive) {
+                foundActive = true;
+                return s;
+              }
+              return { ...s, is_active: false };
+            });
+
+            if (!foundActive && normalizedSessions.length > 0) {
+              normalizedSessions[0].is_active = true;
+            }
+
+            setSessions(normalizedSessions);
+            const active = normalizedSessions.find((s) => s.is_active) || normalizedSessions[0];
             setSelectedSession(active);
+          } else {
+            setSessions(MOCK_SESSIONS);
+            setSelectedSession(MOCK_SESSIONS[0]);
           }
         } catch (err) {
           console.error('Error fetching Supabase data, utilizing fallback state', err);

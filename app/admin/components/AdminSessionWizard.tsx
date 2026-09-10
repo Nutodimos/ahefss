@@ -16,7 +16,7 @@ export default function AdminSessionWizard({
 }: AdminSessionWizardProps) {
   const [sessionCode, setSessionCode] = useState('2026/2027');
   const [themeTitle, setThemeTitle] = useState('New Era');
-  const [isActive, setIsActive] = useState(true);
+  const [isActive, setIsActive] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
